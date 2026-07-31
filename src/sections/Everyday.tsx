@@ -1,6 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { gsap, ScrollTrigger, MOTION_OK, MOTION_REDUCED } from "@/lib/motion";
 import { Check, Headphones, TrendingUp } from "lucide-react";
+import { VirtualCard } from "@/components/VirtualCard";
 
 /* ------------------------------------------------------------------ */
 /*  Data — adapted copy for the MCard recreation                       */
@@ -80,19 +81,7 @@ function MediaCard({ i }: { i: number }) {
     return (
       <CardChrome bg={bg}>
         <div className="flex h-full flex-col items-center justify-center gap-6 p-9">
-          <div className="w-[78%] rounded-2xl border border-white/15 bg-gradient-to-br from-[#26262f] to-[#101014] p-5 shadow-2xl">
-            <div className="flex items-center justify-between">
-              <div className="h-7 w-10 rounded-md bg-gradient-to-br from-[#d9d9e8] to-[#8a8aa8]" />
-              <p className="text-label font-bold italic tracking-widest text-white/85">MCARD</p>
-            </div>
-            {/* Wide tracking is the card-number look, so it overrides the
-                token; Geist Mono supplies the fixed advance underneath. */}
-            <p className="mt-6 whitespace-nowrap font-mono text-body tracking-[0.18em] text-white/80">5312&nbsp;&nbsp;••••&nbsp;&nbsp;••••&nbsp;&nbsp;4477</p>
-            <div className="mt-4 flex items-end justify-between">
-              <p className="text-eyebrow uppercase text-white/60">Sari Wijaya</p>
-              <p className="text-eyebrow tabular-nums text-white/60">12/29</p>
-            </div>
-          </div>
+          <VirtualCard className="w-[78%]" />
           <div className="flex items-center gap-2 rounded-full border border-black/10 bg-white px-5 py-2.5 shadow-sm">
             <Check size={14} className="text-emerald-600" />
             <p className="text-caption font-medium text-slate-600">Online & contactless, langsung aktif</p>
