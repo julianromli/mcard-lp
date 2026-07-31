@@ -50,7 +50,7 @@ function BrandCard({ b }: { b: Brand }) {
        the row gap — see MarqueeRow for why it can't live on the container. */
     <a
       href="#"
-      className="group relative mr-5 block h-[220px] w-[330px] shrink-0 overflow-hidden rounded-[24px] border border-black/[0.08] transition-colors duration-500 hover:border-[#5a58e8]/50"
+      className="group relative mr-5 block h-[220px] w-[330px] shrink-0 overflow-hidden rounded-[24px] border border-black/[0.08] transition-colors duration-500 hover:border-brand/50"
     >
       {/* tinted backdrop */}
       <div
@@ -195,7 +195,7 @@ export function Brands() {
         <div className="br-reveal mt-8 flex flex-wrap items-center justify-center gap-3">
           <a
             href="#"
-            className="group inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-[#5a58e8] px-6 py-3 text-body-sm font-semibold text-white transition-colors hover:bg-[#6a68f2]"
+            className="group inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-brand px-6 py-3 text-body-sm font-semibold text-white transition-colors hover:bg-brand-hover"
           >
             Lihat semua integrasi
             <ArrowRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5" />

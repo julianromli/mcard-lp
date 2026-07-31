@@ -186,7 +186,7 @@ export function Pricing() {
                 <span className="relative z-10">
                   {label}
                   {label === "Tahunan" && (
-                    <span className="ml-2 font-semibold text-[#5a58e8]">-20%</span>
+                    <span className="ml-2 font-semibold text-brand">-20%</span>
                   )}
                 </span>
               </button>
@@ -202,12 +202,12 @@ export function Pricing() {
             key={p.name}
             className={`pr-card relative flex flex-col rounded-[26px] border p-8 transition-colors duration-500 ${
               p.featured
-                ? "border-[#5a58e8]/40 bg-white shadow-[0_24px_80px_-24px_rgba(90,88,232,0.35)]"
+                ? "border-brand/40 bg-white shadow-[0_24px_80px_-24px_rgba(12,82,239,0.35)]"
                 : "border-black/10 bg-white shadow-sm hover:border-black/20"
             }`}
           >
             {p.featured && (
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-[#5a58e8] px-4 py-1 text-eyebrow font-bold uppercase text-white">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-brand px-4 py-1 text-eyebrow font-bold uppercase text-white">
                 Populer
               </span>
             )}
@@ -229,7 +229,7 @@ export function Pricing() {
               type="button"
               className={`mt-6 w-full whitespace-nowrap rounded-full py-3.5 text-body-sm font-semibold transition-colors duration-300 ${
                 p.featured
-                  ? "bg-[#5a58e8] text-white hover:bg-[#6a68f2]"
+                  ? "bg-brand text-white hover:bg-brand-hover"
                   : "border border-black/15 text-slate-800 hover:border-black/35"
               }`}
             >
@@ -242,7 +242,7 @@ export function Pricing() {
             <ul className="mt-5 space-y-4">
               {p.feats.map((f) => (
                 <li key={f.text} className="flex items-center gap-3 text-body-sm text-slate-600">
-                  <f.icon size={17} className={`shrink-0 ${p.featured ? "text-[#5a58e8]" : "text-slate-500"}`} />
+                  <f.icon size={17} className={`shrink-0 ${p.featured ? "text-brand" : "text-slate-500"}`} />
                   <span>
                     {f.strong && <span className="font-semibold text-slate-900">{f.strong} </span>}
                     {f.text}
@@ -263,7 +263,7 @@ export function Pricing() {
               batasnya jelas, dan laporan pengeluaran beres otomatis.&rdquo;
             </p>
             <div className="mt-6 flex items-center gap-3.5">
-              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#5a58e8] text-label font-bold text-white">
+              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-brand text-label font-bold text-white">
                 RA
               </span>
               <div>

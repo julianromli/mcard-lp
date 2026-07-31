@@ -2,17 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { ScrollTrigger } from "@/lib/motion";
 
-function LogoMark({ className = "h-7 w-7" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 32 32" fill="none" className={className}>
-      <circle cx="16" cy="16" r="14.5" stroke="currentColor" strokeWidth="1.4" />
-      <circle cx="16" cy="16" r="10.5" stroke="currentColor" strokeWidth="1.1" strokeDasharray="3 2.2" />
-      <circle cx="16" cy="16" r="6.5" stroke="currentColor" strokeWidth="1.4" />
-      <circle cx="16" cy="16" r="2.4" fill="currentColor" />
-    </svg>
-  );
-}
-
 /* These were buttons carrying a chevron and no menu behind them — an
    affordance that opened nothing, and one that only existed above 1024px.
    They are now real links to the sections they name, reachable at every
@@ -74,7 +63,10 @@ export default function Nav() {
 
       <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between px-6 lg:px-10">
         <a href="#hero" className="flex items-center gap-2.5 py-3 text-slate-900">
-          <LogoMark />
+          {/* Decorative: the MCARD span beside it already names the link, so a
+              second label would have a screen reader read the lockup twice. The
+              explicit box keeps the 72px header from reflowing on decode. */}
+          <img src="/mayar-icon-96.png" alt="" width={28} height={28} className="h-7 w-7" />
           {/* Wordmark, not a label — the 0.32em lockup is deliberate and stays
               an override rather than joining the scale's eyebrow tracking. */}
           <span className="text-label font-semibold tracking-[0.32em]">MCARD</span>
@@ -101,7 +93,7 @@ export default function Nav() {
           </a>
           <a
             href="#"
-            className="whitespace-nowrap rounded-full bg-[#5a58e8] px-5 py-3 text-body-sm font-semibold text-white transition-colors hover:bg-[#6c6af4]"
+            className="whitespace-nowrap rounded-full bg-brand px-5 py-3 text-body-sm font-semibold text-white transition-colors hover:bg-brand-hover"
           >
             Daftar Gratis
           </a>
@@ -138,13 +130,16 @@ export default function Nav() {
               </li>
             ))}
             <li className="sm:hidden">
-              <a
-                href="#"
+              {/* An in-page action, not a destination: as an <a href="#"> it was
+                  unreachable by keyboard activation and jumped to the top on
+                  click. A button carries the same styling and real semantics. */}
+              <button
+                type="button"
                 onClick={() => setOpen(false)}
-                className="block py-4 text-body font-medium text-slate-700 transition-colors hover:text-slate-900"
+                className="block w-full py-4 text-left text-body font-medium text-slate-700 transition-colors hover:text-slate-900"
               >
                 Masuk
-              </a>
+              </button>
             </li>
           </ul>
         </nav>
