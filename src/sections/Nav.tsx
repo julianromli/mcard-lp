@@ -44,31 +44,33 @@ export default function Nav() {
       <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between px-6 lg:px-10">
         <a href="#" className="flex items-center gap-2.5 text-slate-900">
           <LogoMark />
-          <span className="text-[13px] font-semibold tracking-[0.32em]">MCARD</span>
+          {/* Wordmark, not a label — the 0.32em lockup is deliberate and stays
+              an override rather than joining the scale's eyebrow tracking. */}
+          <span className="text-label font-semibold tracking-[0.32em]">MCARD</span>
         </a>
 
         <nav className="hidden items-center gap-8 lg:flex">
           {MENU.map((m) => (
             <button
               key={m}
-              className="flex items-center gap-1.5 text-[14px] font-medium text-slate-600 transition-colors hover:text-slate-900"
+              className="flex items-center gap-1.5 whitespace-nowrap text-body-sm font-medium text-slate-600 transition-colors hover:text-slate-900"
             >
               {m}
               <ChevronDown className="h-3.5 w-3.5 opacity-70" />
             </button>
           ))}
-          <a href="#" className="text-[14px] font-medium text-slate-600 transition-colors hover:text-slate-900">
+          <a href="#" className="text-body-sm font-medium text-slate-600 transition-colors hover:text-slate-900">
             Harga
           </a>
         </nav>
 
         <div className="flex items-center gap-6">
-          <a href="#" className="hidden text-[14px] font-medium text-slate-600 transition-colors hover:text-slate-900 sm:block">
+          <a href="#" className="hidden text-body-sm font-medium text-slate-600 transition-colors hover:text-slate-900 sm:block">
             Masuk
           </a>
           <a
             href="#"
-            className="rounded-full bg-[#5a58e8] px-5 py-2.5 text-[14px] font-medium text-white transition-colors hover:bg-[#6c6af4]"
+            className="whitespace-nowrap rounded-full bg-[#5a58e8] px-5 py-2.5 text-body-sm font-semibold text-white transition-colors hover:bg-[#6c6af4]"
           >
             Daftar Gratis
           </a>

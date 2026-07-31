@@ -285,10 +285,10 @@ export default function Hero() {
 
       {/* hero copy */}
       <div ref={copyRef} className="relative z-20 flex h-full flex-col items-center px-6 pt-[12.5vh]">
-        <h1 className="hero-copy-el text-center text-[clamp(40px,4.8vw,68px)] font-medium leading-[1.04] tracking-[-0.025em] text-slate-900 opacity-0">
+        <h1 className="hero-copy-el text-balance text-center text-display-lg font-extrabold text-slate-900 opacity-0">
           Kendali penuh atas pengeluaran bisnismu
         </h1>
-        <p className="hero-copy-el mt-5 max-w-[580px] text-center text-[17px] leading-[1.6] text-slate-600 opacity-0">
+        <p className="hero-copy-el mt-5 max-w-[580px] text-pretty text-center text-body-lg text-slate-600 opacity-0">
           Terbitkan kartu virtual tanpa batas, atur anggaran per tim, dan pantau tiap transaksi real-time.
           Semua dari satu dashboard.
         </p>
@@ -305,13 +305,13 @@ export default function Hero() {
               type="email"
               autoComplete="email"
               placeholder="nama@perusahaan.com"
-              className="w-full bg-transparent text-[15px] text-slate-900 outline-none placeholder:text-slate-400"
+              className="w-full bg-transparent text-body text-slate-900 outline-none placeholder:text-slate-400"
             />
-            <button className="h-[40px] shrink-0 rounded-full bg-[#5a58e8] px-5 text-[14px] font-medium text-white transition-colors hover:bg-[#6c6af4]">
+            <button className="h-[40px] shrink-0 whitespace-nowrap rounded-full bg-[#5a58e8] px-5 text-body-sm font-semibold text-white transition-colors hover:bg-[#6c6af4]">
               Daftar Gratis
             </button>
           </div>
-          <button className="h-[52px] rounded-full border border-black/15 bg-white/60 px-6 text-[15px] font-medium text-slate-800 backdrop-blur-md transition-colors hover:bg-black/5">
+          <button className="h-[52px] whitespace-nowrap rounded-full border border-black/15 bg-white/60 px-6 text-body-sm font-semibold text-slate-800 backdrop-blur-md transition-colors hover:bg-black/5">
             Lihat Demo
           </button>
         </form>
@@ -320,7 +320,7 @@ export default function Hero() {
       {/* regulatory pill */}
       <div
         ref={discRef}
-        className="absolute bottom-5 left-1/2 z-20 w-[max-content] max-w-[92vw] -translate-x-1/2 rounded-xl bg-white/75 px-5 py-2.5 text-center text-[12.5px] leading-snug text-slate-600 opacity-0 shadow-sm backdrop-blur"
+        className="absolute bottom-5 left-1/2 z-20 w-[max-content] max-w-[92vw] -translate-x-1/2 text-pretty rounded-xl bg-white/75 px-5 py-2.5 text-center text-caption text-slate-600 opacity-0 shadow-sm backdrop-blur"
       >
         MCard adalah platform spend management dari Mayar, bukan bank. Kartu diterbitkan lewat partner
         berlisensi yang terdaftar dan diawasi.

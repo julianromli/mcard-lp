@@ -8,7 +8,7 @@ function CoverageBars() {
     <div className="relative h-full w-full">
       {/* mcard bar */}
       <div className="absolute bottom-0 left-[13%] flex h-full w-[74px] flex-col items-center justify-end">
-        <p className="prot-fade mb-3 text-center text-[12px] leading-[1.35] text-slate-500">
+        <p className="prot-fade mb-3 text-center text-caption tabular-nums text-slate-500">
           Rp 2 M
           <br />
           MCard
@@ -20,7 +20,7 @@ function CoverageBars() {
       </div>
       {/* industry bar */}
       <div className="absolute bottom-0 right-[13%] flex h-full w-[74px] flex-col items-center justify-end">
-        <p className="prot-fade mb-3 text-center text-[12px] leading-[1.35] text-slate-500">
+        <p className="prot-fade mb-3 text-center text-caption tabular-nums text-slate-500">
           Rp 100 jt
           <br />
           Standar e-money
@@ -291,7 +291,7 @@ export default function Protection() {
     <section ref={root} className="relative bg-white px-6 py-[13vh] lg:px-10">
       <div className="mx-auto max-w-[1240px]">
         {/* headline */}
-        <h2 className="prot-headline mx-auto max-w-[720px] text-center text-[clamp(30px,3.4vw,44px)] font-medium leading-[1.18] tracking-[-0.02em] text-slate-900 opacity-0">
+        <h2 className="prot-headline mx-auto max-w-[720px] text-balance text-center text-title-lg font-bold text-slate-900 opacity-0">
           Kenapa bisnis percaya menaruh uangnya di sini
         </h2>
 
@@ -302,7 +302,10 @@ export default function Protection() {
               {i > 0 && (
                 <span className="prot-divider absolute left-0 top-1/2 hidden h-[86px] w-px -translate-y-1/2 bg-black/10 lg:block" />
               )}
-              <p className="prot-stat text-[clamp(44px,4.6vw,64px)] font-medium leading-none tracking-[-0.02em] text-slate-900 opacity-0">
+              {/* GSAP rewrites these digits every frame of the count-up, so
+                  proportional figures would make the number twitch sideways as
+                  it climbs. Fixed advance holds it still. */}
+              <p className="prot-stat text-display-lg font-extrabold tabular-nums text-slate-900 opacity-0">
                 {s.value == null ? (
                   s.text
                 ) : (
@@ -315,7 +318,7 @@ export default function Protection() {
                   </span>
                 )}
               </p>
-              <p className="text-[13px] text-slate-500">{s.label}</p>
+              <p className="text-pretty text-label text-slate-500">{s.label}</p>
             </div>
           ))}
         </div>
@@ -324,7 +327,7 @@ export default function Protection() {
         <div className="prot-rule mt-[9vh] h-px w-full origin-left bg-black/10" />
 
         {/* protection */}
-        <h3 className="prot-subhead mt-[7vh] max-w-[560px] text-[clamp(24px,2.4vw,32px)] font-medium leading-[1.25] tracking-[-0.015em] text-slate-900 opacity-0">
+        <h3 className="prot-subhead mt-[7vh] max-w-[560px] text-balance text-title font-bold text-slate-900 opacity-0">
           Perlindungan yang tidak berhenti di standar minimum.
         </h3>
 
@@ -334,8 +337,8 @@ export default function Protection() {
               <div className="relative aspect-[1/1.02] overflow-hidden rounded-2xl border border-black/[0.07] bg-[linear-gradient(160deg,#f6f6fb_0%,#eef0f7_100%)]">
                 {c.visual}
               </div>
-              <h4 className="mt-5 text-[15.5px] font-medium text-slate-900">{c.title}</h4>
-              <p className="mt-1.5 text-[13.5px] leading-[1.6] text-slate-500">{c.body}</p>
+              <h4 className="mt-5 text-balance text-body font-semibold text-slate-900">{c.title}</h4>
+              <p className="mt-1.5 text-pretty text-body-sm text-slate-500">{c.body}</p>
             </div>
           ))}
         </div>

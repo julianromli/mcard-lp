@@ -152,9 +152,9 @@ export default function Footer() {
         <div className="ft-grid grid grid-cols-2 gap-x-8 gap-y-12 md:grid-cols-3 lg:grid-cols-6">
           {/* market */}
           <div className="ft-col opacity-0">
-            <h4 className="mb-5 text-[15px] font-semibold text-slate-900">Wilayah</h4>
-            <button className="group flex items-center gap-2.5 rounded-xl border border-black/10 bg-white px-4 py-2.5 text-[13.5px] text-slate-700 shadow-sm transition-colors hover:border-black/25 hover:bg-black/[0.03]">
-              <span className="text-[15px] leading-none">🇮🇩</span>
+            <h4 className="mb-5 text-body font-semibold text-slate-900">Wilayah</h4>
+            <button className="group flex items-center gap-2.5 whitespace-nowrap rounded-xl border border-black/10 bg-white px-4 py-2.5 text-body-sm text-slate-700 shadow-sm transition-colors hover:border-black/25 hover:bg-black/[0.03]">
+              <span className="text-body leading-none">🇮🇩</span>
               Indonesia
               <ArrowRight className="h-3.5 w-3.5 text-slate-400 transition-transform group-hover:translate-x-0.5" />
             </button>
@@ -163,13 +163,13 @@ export default function Footer() {
           {/* link columns */}
           {COLUMNS.map((col) => (
             <div key={col.heading} className="ft-col opacity-0">
-              <h4 className="mb-5 text-[15px] font-semibold text-slate-900">{col.heading}</h4>
+              <h4 className="mb-5 text-body font-semibold text-slate-900">{col.heading}</h4>
               <ul className="space-y-3.5">
                 {col.links.map((l) => (
                   <li key={l}>
                     <a
                       href="#"
-                      className="text-[13.5px] text-slate-500 transition-colors hover:text-slate-900"
+                      className="text-body-sm text-slate-500 transition-colors hover:text-slate-900"
                     >
                       {l}
                     </a>
@@ -181,7 +181,7 @@ export default function Footer() {
 
           {/* follow */}
           <div className="ft-col opacity-0">
-            <h4 className="mb-5 text-[15px] font-semibold text-slate-900">Ikuti Kami</h4>
+            <h4 className="mb-5 text-body font-semibold text-slate-900">Ikuti Kami</h4>
             <div className="flex gap-2.5">
               {SOCIALS.map(({ i: I, label }) => (
                 <a
@@ -205,7 +205,7 @@ export default function Footer() {
           >
             {WORDMARK.map((ch, i) => (
               <span key={i} className="inline-block overflow-hidden">
-                <span className="ft-letter inline-block text-[clamp(96px,18vw,280px)] font-extrabold tracking-[-0.03em] text-slate-900">
+                <span className="ft-letter inline-block text-mega font-extrabold text-slate-900">
                   {ch}
                 </span>
               </span>
@@ -215,12 +215,12 @@ export default function Footer() {
 
         {/* legal bar */}
         <div className="ft-legal mt-4 flex flex-col gap-4 border-t border-black/10 py-6 opacity-0 lg:flex-row lg:items-start lg:justify-between">
-          <p className="max-w-[640px] text-[11px] leading-[1.6] text-slate-400">
+          <p className="max-w-[640px] text-pretty text-caption text-slate-400">
             MCard adalah platform spend management dan kartu virtual untuk bisnis di Indonesia, bagian dari
             ekosistem Mayar. Kartu diterbitkan lewat partner berlisensi yang terdaftar dan diawasi.
             © 2026 PT Mayar Kernel Supernova · MCard
           </p>
-          <div className="flex shrink-0 gap-7 text-[12px] text-slate-500">
+          <div className="flex shrink-0 gap-7 text-caption text-slate-500">
             {["Ketentuan", "Privasi", "Cookies", "Keamanan"].map((l) => (
               <a key={l} href="#" className="transition-colors hover:text-slate-900">
                 {l}

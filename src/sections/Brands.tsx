@@ -40,7 +40,9 @@ function BrandCard({ b }: { b: Brand }) {
           background: `radial-gradient(120% 130% at 20% 0%, ${b.hue}1c 0%, #f7f7fb 55%, #f2f2f8 100%)`,
         }}
       />
-      {/* giant monogram watermark */}
+      {/* Giant monogram watermark. Deliberately off the scale: it is decoration
+          sized against a fixed 330x220 card, so a fluid display token would
+          rescale it independently of the card and break the crop. */}
       <span
         className="pointer-events-none absolute -right-4 -top-10 select-none text-[190px] font-extrabold leading-none tracking-tighter transition-transform duration-700 ease-out group-hover:-translate-y-2"
         style={{ color: `${b.hue}1f` }}
@@ -50,7 +52,7 @@ function BrandCard({ b }: { b: Brand }) {
 
       {/* badge top-left */}
       <span
-        className="absolute left-4 top-4 rounded-full px-3 py-1.5 text-[11px] font-semibold"
+        className="absolute left-4 top-4 whitespace-nowrap rounded-full px-3 py-1.5 text-caption font-semibold"
         style={{ background: `${b.hue}2b`, color: b.hue, border: `1px solid ${b.hue}55` }}
       >
         {b.badge}
@@ -59,14 +61,14 @@ function BrandCard({ b }: { b: Brand }) {
       {/* floating info pill */}
       <div className="absolute inset-x-3 bottom-3 flex items-center gap-3 rounded-2xl border border-black/[0.07] bg-white/90 px-4 py-3 shadow-sm backdrop-blur-md transition-transform duration-500 group-hover:-translate-y-1">
         <span
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[15px] font-bold text-[#0d0d13]"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-body font-bold text-[#0d0d13]"
           style={{ background: b.hue }}
         >
           {b.mono}
         </span>
         <div className="min-w-0">
-          <p className="truncate text-[14px] font-semibold text-slate-900">{b.name}</p>
-          <p className="truncate text-[12px] text-slate-400">{b.cat}</p>
+          <p className="truncate text-body-sm font-semibold text-slate-900" title={b.name}>{b.name}</p>
+          <p className="truncate text-caption text-slate-400" title={b.cat}>{b.cat}</p>
         </div>
       </div>
     </div>
@@ -129,13 +131,13 @@ export function Brands() {
 
       {/* header */}
       <div className="br-head mx-auto max-w-[820px] px-6 text-center">
-        <h2 className="br-reveal text-[clamp(38px,5vw,64px)] font-semibold leading-[1.05] tracking-[-0.03em] text-slate-900">
+        <h2 className="br-reveal text-balance text-display-lg font-extrabold text-slate-900">
           Terhubung dengan tools yang kamu pakai tiap hari
         </h2>
         <div className="br-reveal mt-8">
           <a
             href="#"
-            className="group inline-flex items-center gap-2 rounded-full bg-[#5a58e8] px-6 py-3 text-[14px] font-semibold text-white transition-colors hover:bg-[#6a68f2]"
+            className="group inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-[#5a58e8] px-6 py-3 text-body-sm font-semibold text-white transition-colors hover:bg-[#6a68f2]"
           >
             Lihat semua integrasi
             <ArrowRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5" />

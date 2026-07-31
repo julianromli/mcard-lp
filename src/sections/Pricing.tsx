@@ -90,12 +90,12 @@ function Price({ plan, yearly }: { plan: Plan; yearly: boolean }) {
     <div className="flex items-baseline gap-2 whitespace-nowrap">
       <span
         key={label}
-        className="price-anim inline-block text-[clamp(38px,3.6vw,52px)] font-semibold leading-none tracking-[-0.03em] text-slate-900"
+        className="price-anim inline-block text-display font-extrabold tabular-nums text-slate-900"
       >
         {label}
       </span>
       {plan.monthly !== null && plan.monthly > 0 && (
-        <span className="text-[15px] text-slate-400">/bulan</span>
+        <span className="text-body-sm text-slate-400">/bulan</span>
       )}
     </div>
   );
@@ -145,12 +145,12 @@ export function Pricing() {
 
       {/* header */}
       <div className="pr-head mx-auto max-w-[820px] px-6 text-center">
-        <h2 className="pr-reveal text-[clamp(38px,5vw,64px)] font-semibold leading-[1.08] tracking-[-0.03em] text-slate-900">
+        <h2 className="pr-reveal text-balance text-display-lg font-extrabold text-slate-900">
           Harga transparan,
           <br />
           tanpa biaya tersembunyi
         </h2>
-        <p className="pr-reveal mt-5 text-[17px] text-slate-500">
+        <p className="pr-reveal mt-5 text-pretty text-body-lg text-slate-500">
           Mulai gratis. Naik paket saat tim kamu bertambah. Semua paket berbayar bisa{" "}
           <span className="font-semibold text-slate-800">dicoba 14 hari gratis</span>.
         </p>
@@ -163,7 +163,7 @@ export function Pricing() {
               <button
                 key={label}
                 onClick={() => setYearly(label === "Tahunan")}
-                className={`relative rounded-full px-5 py-2 text-[13px] font-medium transition-colors duration-300 ${
+                className={`relative whitespace-nowrap rounded-full px-5 py-2 text-label font-medium transition-colors duration-300 ${
                   active ? "text-slate-900" : "text-slate-500 hover:text-slate-800"
                 }`}
               >
@@ -194,26 +194,26 @@ export function Pricing() {
             }`}
           >
             {p.featured && (
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#5a58e8] px-4 py-1 text-[10.5px] font-bold uppercase tracking-[0.16em] text-white">
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-[#5a58e8] px-4 py-1 text-eyebrow font-bold uppercase text-white">
                 Populer
               </span>
             )}
-            <h3 className="text-[22px] font-semibold text-slate-900">{p.name}</h3>
-            <p className="mt-2 min-h-[44px] text-[14px] leading-[1.5] text-slate-500">{p.tagline}</p>
+            <h3 className="text-lead font-bold text-slate-900">{p.name}</h3>
+            <p className="mt-2 min-h-[44px] text-pretty text-body-sm text-slate-500">{p.tagline}</p>
 
             {/* fixed height so the yearly billing note on one card can't push
                 its CTA below the others' */}
             <div className="mt-6 min-h-[76px]">
               <Price plan={p} yearly={yearly} />
               {yearly && p.monthly !== null && p.monthly > 0 && (
-                <p className="mt-2 text-[12px] text-slate-400">
+                <p className="mt-2 text-caption tabular-nums text-slate-400">
                   Ditagih Rp {(p.yearly * 12 * 1000).toLocaleString("id-ID")} per tahun
                 </p>
               )}
             </div>
 
             <button
-              className={`mt-6 w-full rounded-full py-3.5 text-[14px] font-semibold transition-colors duration-300 ${
+              className={`mt-6 w-full whitespace-nowrap rounded-full py-3.5 text-body-sm font-semibold transition-colors duration-300 ${
                 p.featured
                   ? "bg-[#5a58e8] text-white hover:bg-[#6a68f2]"
                   : "border border-black/15 text-slate-800 hover:border-black/35"
@@ -224,10 +224,10 @@ export function Pricing() {
 
             <div className="my-7 border-t border-dashed border-black/10" />
 
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">{p.includes}</p>
+            <p className="text-eyebrow font-semibold uppercase text-slate-400">{p.includes}</p>
             <ul className="mt-5 space-y-4">
               {p.feats.map((f) => (
-                <li key={f.text} className="flex items-center gap-3 text-[14px] text-slate-600">
+                <li key={f.text} className="flex items-center gap-3 text-body-sm text-slate-600">
                   <f.icon size={17} className={`shrink-0 ${p.featured ? "text-[#5a58e8]" : "text-slate-400"}`} />
                   <span>
                     {f.strong && <span className="font-semibold text-slate-900">{f.strong} </span>}
@@ -244,25 +244,25 @@ export function Pricing() {
       <div className="pr-ent mx-auto mt-16 max-w-[1180px] px-6">
         <div className="flex flex-col gap-10 rounded-[26px] border border-black/10 bg-black/[0.02] p-8 lg:flex-row lg:items-center lg:p-12">
           <div className="max-w-[560px] shrink-0">
-            <p className="text-[20px] font-medium leading-[1.55] tracking-[-0.01em] text-slate-900">
+            <p className="text-pretty text-lead font-medium text-slate-900">
               &ldquo;Sejak pakai MCard, kami berhenti ngejar struk. Tiap tim punya kartunya sendiri,
               batasnya jelas, dan laporan pengeluaran beres otomatis.&rdquo;
             </p>
             <div className="mt-6 flex items-center gap-3.5">
-              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#5a58e8] text-[13px] font-bold text-white">
+              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#5a58e8] text-label font-bold text-white">
                 RA
               </span>
               <div>
-                <p className="text-[14px] font-semibold text-slate-900">Rizki Adiwilaga</p>
-                <p className="text-[12.5px] text-slate-500">Finance Lead, TugasAI Team</p>
+                <p className="text-body-sm font-semibold text-slate-900">Rizki Adiwilaga</p>
+                <p className="text-caption text-slate-500">Finance Lead, TugasAI Team</p>
               </div>
             </div>
           </div>
           <div className="grid flex-1 grid-cols-2 gap-x-8 gap-y-8 lg:pl-10">
             {TESTI_STATS.map((s) => (
               <div key={s.label}>
-                <p className="text-[clamp(26px,2.6vw,38px)] font-semibold tracking-[-0.02em] text-slate-900">{s.value}</p>
-                <p className="mt-1 text-[13px] text-slate-500">{s.label}</p>
+                <p className="text-title font-bold tabular-nums text-slate-900">{s.value}</p>
+                <p className="mt-1 text-pretty text-label text-slate-500">{s.label}</p>
               </div>
             ))}
           </div>
