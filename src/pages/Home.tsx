@@ -1,6 +1,5 @@
 import Nav from "../sections/Nav";
 import Hero from "../sections/Hero";
-import Features from "../sections/Features";
 import { Everyday } from "../sections/Everyday";
 import Protection from "../sections/Protection";
 import { Brands } from "../sections/Brands";
@@ -10,15 +9,16 @@ import Footer from "../sections/Footer";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white font-[Inter,system-ui,sans-serif] text-slate-900 antialiased">
+    <div className="min-h-screen bg-white text-slate-900">
       <Nav />
-      <Hero />
-      <Features />
-      <Everyday />
-      <Protection />
-      <Brands />
-      <Pricing />
-      <Cta />
+      <main id="konten">
+        <Hero />
+        <Everyday />
+        <Protection />
+        <Brands />
+        <Pricing />
+        <Cta />
+      </main>
       <Footer />
     </div>
   );

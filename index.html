@@ -3,11 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Both faces are self-hosted, so there is no third-party handshake ahead
+         of first paint. Only the latin variable file is preloaded: it carries
+         every weight the page uses, and the mono is one line far below the fold. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/plus-jakarta-sans-latin.woff2"
+      crossorigin
     />
     <!-- The hero photo is the LCP element but sits behind the JS bundle in the
          discovery order, so it is fetched up front at high priority instead. -->
