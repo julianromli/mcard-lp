@@ -123,19 +123,6 @@ export default function Protection() {
   useLayoutEffect(() => {
     const mm = gsap.matchMedia(root);
     mm.add(MOTION_OK, () => {
-      /* headline */
-      gsap.fromTo(
-        ".prot-headline",
-        { y: 44, autoAlpha: 0 },
-        {
-          y: 0,
-          autoAlpha: 1,
-          duration: 0.9,
-          ease: "power2.out",
-          scrollTrigger: { trigger: ".prot-headline", start: "top 78%" },
-        }
-      );
-
       /* stats: staggered reveal + count-up */
       gsap.fromTo(
         ".prot-stat",
@@ -290,13 +277,8 @@ export default function Protection() {
   return (
     <section ref={root} className="relative bg-white px-6 py-[13vh] lg:px-10">
       <div className="mx-auto max-w-[1240px]">
-        {/* headline */}
-        <h2 className="prot-headline mx-auto max-w-[720px] text-balance text-center text-title-lg font-bold text-slate-900 opacity-0">
-          Kenapa bisnis percaya menaruh uangnya di sini
-        </h2>
-
         {/* stats */}
-        <div className="prot-stats mt-[9vh] grid grid-cols-2 lg:grid-cols-4">
+        <div className="prot-stats grid grid-cols-2 lg:grid-cols-4">
           {STATS.map((s, i) => (
             <div key={s.label} className="relative flex flex-col items-center gap-3 px-4 py-2 text-center">
               {i > 0 && (
