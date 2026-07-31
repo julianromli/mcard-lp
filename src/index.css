@@ -143,6 +143,21 @@
     font-size: var(--text-body);
     line-height: var(--text-body--line-height);
   }
+
+  /* No component declared a focus style, which left every link and button a
+     keyboard black hole. This is the floor. :where() holds specificity at zero
+     so a component can still opt into its own ring without !important. */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid #5a58e8;
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+  }
+
+  /* The header is fixed at 72px, so an anchor jump would otherwise land the
+     target's first line underneath it. */
+  :where(section[id]) {
+    scroll-margin-top: 88px;
+  }
 }
 
 /* The scroll-driven hero pins for 2700px and scrubs a camera push-in. For

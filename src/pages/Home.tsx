@@ -11,12 +11,14 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white text-slate-900">
       <Nav />
-      <Hero />
-      <Everyday />
-      <Protection />
-      <Brands />
-      <Pricing />
-      <Cta />
+      <main id="konten">
+        <Hero />
+        <Everyday />
+        <Protection />
+        <Brands />
+        <Pricing />
+        <Cta />
+      </main>
       <Footer />
     </div>
   );

@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState } from "react";
-import { gsap, ScrollTrigger, MOTION_OK } from "@/lib/motion";
+import { gsap, ScrollTrigger, MOTION_OK, MOTION_REDUCED } from "@/lib/motion";
 import { Check, Headphones, TrendingUp } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
@@ -55,7 +55,7 @@ function MediaCard({ i }: { i: number }) {
       <CardChrome bg={bg}>
         <div className="flex h-full flex-col justify-center gap-4 p-9">
           <div className="rounded-2xl border border-black/[0.07] bg-white p-5 shadow-sm">
-            <p className="text-eyebrow uppercase text-slate-400">Saldo total</p>
+            <p className="text-eyebrow uppercase text-slate-500">Saldo total</p>
             <p className="mt-1 text-title font-bold tabular-nums text-slate-900">Rp 74,7 M</p>
             <div className="mt-3 flex gap-2">
               <span className="rounded-full bg-[#5a58e8] px-4 py-2 text-caption font-semibold text-white">Kirim</span>
@@ -68,7 +68,7 @@ function MediaCard({ i }: { i: number }) {
               ["Deposito", "Rp 31 M"],
             ].map(([k, v]) => (
               <div key={k} className="rounded-2xl border border-black/[0.06] bg-white/80 p-4">
-                <p className="text-eyebrow uppercase text-slate-400">{k}</p>
+                <p className="text-eyebrow uppercase text-slate-500">{k}</p>
                 <p className="mt-1 text-body font-semibold tabular-nums text-slate-900">{v}</p>
               </div>
             ))}
@@ -89,8 +89,8 @@ function MediaCard({ i }: { i: number }) {
                 token; Geist Mono supplies the fixed advance underneath. */}
             <p className="mt-6 whitespace-nowrap font-mono text-body tracking-[0.18em] text-white/80">5312&nbsp;&nbsp;••••&nbsp;&nbsp;••••&nbsp;&nbsp;4477</p>
             <div className="mt-4 flex items-end justify-between">
-              <p className="text-eyebrow uppercase text-white/45">Sari Wijaya</p>
-              <p className="text-eyebrow tabular-nums text-white/45">12/29</p>
+              <p className="text-eyebrow uppercase text-white/60">Sari Wijaya</p>
+              <p className="text-eyebrow tabular-nums text-white/60">12/29</p>
             </div>
           </div>
           <div className="flex items-center gap-2 rounded-full border border-black/10 bg-white px-5 py-2.5 shadow-sm">
@@ -106,17 +106,17 @@ function MediaCard({ i }: { i: number }) {
         <div className="flex h-full flex-col justify-center gap-4 p-9">
           <div className="rounded-2xl border border-black/[0.07] bg-white p-5 shadow-sm">
             <div className="flex items-center justify-between">
-              <p className="text-eyebrow uppercase text-slate-400">Limit kartu</p>
+              <p className="text-eyebrow uppercase text-slate-500">Limit kartu</p>
               <TrendingUp size={16} className="text-[#5a58e8]" />
             </div>
             <p className="mt-1 text-title font-bold tabular-nums text-slate-900">Rp 3,75 M</p>
             <div className="mt-3 h-2 overflow-hidden rounded-full bg-black/[0.07]">
               <div className="h-full w-[38%] rounded-full bg-gradient-to-r from-[#5a58e8] to-[#8b89ff]" />
             </div>
-            <p className="mt-2 text-caption tabular-nums text-slate-400">38% terpakai · limit menyesuaikan pendapatan</p>
+            <p className="mt-2 text-caption tabular-nums text-slate-500">38% terpakai · limit menyesuaikan pendapatan</p>
           </div>
           <div className="rounded-2xl border border-black/[0.06] bg-white/80 p-4">
-            <p className="text-eyebrow uppercase text-slate-400">Limit tambahan tersedia</p>
+            <p className="text-eyebrow uppercase text-slate-500">Limit tambahan tersedia</p>
             <p className="mt-1 text-body-lg font-semibold tabular-nums text-slate-900">Rp 18 M</p>
           </div>
         </div>
@@ -135,7 +135,7 @@ function MediaCard({ i }: { i: number }) {
             <div key={n} className="flex items-center justify-between rounded-2xl border border-black/[0.06] bg-white px-5 py-4 shadow-sm">
               <div>
                 <p className="text-label font-medium text-slate-800">{n}</p>
-                <p className="text-caption text-slate-400">{d}</p>
+                <p className="text-caption text-slate-500">{d}</p>
               </div>
               {/* Amounts stack in a column and are read against each other, so
                   the digits have to share one advance width. */}
@@ -175,9 +175,18 @@ export function Everyday() {
   const root = useRef<HTMLElement>(null);
   const mediaWrap = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
+  /* Which item is open is decided by a ScrollTrigger, and that trigger only
+     exists under MOTION_OK. Left alone, a reduced-motion reader kept item 0
+     open forever and the other four descriptions stayed collapsed at 0fr —
+     four fifths of the section's copy unreachable. Open them all instead. */
+  const [allOpen, setAllOpen] = useState(false);
 
   useLayoutEffect(() => {
     const mm = gsap.matchMedia(root);
+    mm.add(MOTION_REDUCED, () => {
+      setAllOpen(true);
+      return () => setAllOpen(false);
+    });
     mm.add(MOTION_OK, () => {
       // header entrance
       gsap.fromTo(
@@ -215,7 +224,7 @@ export function Everyday() {
   }, []);
 
   return (
-    <section ref={root} className="relative bg-[#fafafc] py-[14vh]">
+    <section ref={root} id="fitur" className="relative bg-[#fafafc] py-[14vh]">
       {/* header */}
       <div className="ev-head mx-auto max-w-[820px] px-6 text-center">
         <h2 className="ev-reveal text-balance text-display-lg font-extrabold text-slate-900">
@@ -235,7 +244,10 @@ export function Everyday() {
               {ITEMS.map((it, i) => (
                 <div
                   key={it.title}
-                  className="absolute inset-0 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                  /* transition-all also tried to interpolate the z-index flip
+                     below, which is a discrete property. Name the two that
+                     actually move. */
+                  className="absolute inset-0 transition-[opacity,transform] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
                   style={{
                     opacity: active === i ? 1 : 0,
                     transform: `scale(${active === i ? 1 : 0.94}) translateY(${active === i ? 0 : 26}px)`,
@@ -258,16 +270,19 @@ export function Everyday() {
               <div className="relative mb-8 aspect-[4/3] lg:hidden">
                 <MediaCard i={i} />
               </div>
+              {/* Inactive headings were slate-300 on #fafafc — about 1.4:1,
+                  unreadable rather than de-emphasised. slate-500 clears 4.5:1
+                  and still reads a clear step back from the active one. */}
               <h3
                 className={`text-balance text-title-lg font-bold transition-colors duration-500 ${
-                  active === i ? "text-slate-900" : "text-slate-300"
+                  allOpen || active === i ? "text-slate-900" : "text-slate-500"
                 }`}
               >
                 {it.title}
               </h3>
               <div
                 className="grid transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
-                style={{ gridTemplateRows: active === i ? "1fr" : "0fr" }}
+                style={{ gridTemplateRows: allOpen || active === i ? "1fr" : "0fr" }}
               >
                 <div className="overflow-hidden">
                   <p className="max-w-[440px] text-pretty pt-4 text-body text-slate-500">{it.desc}</p>

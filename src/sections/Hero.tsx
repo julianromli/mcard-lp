@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState } from "react";
-import { gsap, ScrollTrigger, MOTION_OK, MOTION_REDUCED } from "@/lib/motion";
+import { gsap, ScrollTrigger, MOTION_OK, MOTION_OK_DESKTOP, MOTION_REDUCED } from "@/lib/motion";
 
 const DW = 1600;
 const DH = 904;
@@ -82,6 +82,13 @@ export default function Hero() {
       : coverRect(window.innerWidth, window.innerHeight)
   );
 
+  /* The dashboard is a 564KB self-contained document for a surface nobody sees
+     until the push-in is a fifth of the way through — and one that never runs
+     at all below 1024px or under reduced motion. It stays unmounted until the
+     scrub actually approaches it. */
+  const [mountScreen, setMountScreen] = useState(false);
+  const mountedRef = useRef(false);
+
   useLayoutEffect(() => {
     const measure = () => {
       const vw = window.innerWidth;
@@ -147,6 +154,12 @@ export default function Hero() {
   useLayoutEffect(() => {
     const mm = gsap.matchMedia(root);
 
+    /* The screen overlay ships with opacity-0 in the markup, and only the
+       desktop scrub below ever reveals it. opacity alone still leaves the
+       iframe in the tab order, so on every path that does not run that scrub
+       the overlay is taken out of it — autoAlpha writes visibility:hidden. */
+    gsap.set(screenRef.current, { autoAlpha: 0 });
+
     /* The hero copy ships with opacity-0 in the markup so the intro can fade
        it in, which means skipping the animation would leave the headline
        invisible. Readers who ask for reduced motion get the end state applied
@@ -167,8 +180,10 @@ export default function Hero() {
           0.3
         )
         .fromTo(discRef.current, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.7 }, 1.0);
+    });
 
-      /* ---------- scroll-driven cinematic push-in ---------- */
+    /* ---------- scroll-driven cinematic push-in (desktop only) ---------- */
+    mm.add(MOTION_OK_DESKTOP, () => {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: root.current,
@@ -178,6 +193,19 @@ export default function Hero() {
           pin: true,
           anticipatePin: 1,
           invalidateOnRefresh: true,
+          /* Both layers are promoted for the length of the scrub and no
+             longer: the stage holds a 3840px photo blown up ~20x, which is a
+             texture worth releasing the moment the section is behind us. */
+          onToggle: (self) => {
+            const v = self.isActive ? "transform" : "auto";
+            if (stageRef.current) stageRef.current.style.willChange = v;
+            if (screenRef.current) screenRef.current.style.willChange = v;
+          },
+          onUpdate: (self) => {
+            if (mountedRef.current || self.progress < 0.08) return;
+            mountedRef.current = true;
+            setMountScreen(true);
+          },
         },
       });
 
@@ -224,8 +252,11 @@ export default function Hero() {
     };
   }, []);
 
+  /* svh, not vh: on mobile Safari the collapsing URL bar makes 100vh taller
+     than the visible viewport, which pushed the regulatory pill off-screen on
+     load. svh is also the stable number ScrollTrigger wants for the pin. */
   return (
-    <section ref={root} id="hero" className="relative h-screen overflow-hidden bg-white">
+    <section ref={root} id="hero" className="relative h-[100svh] overflow-hidden bg-white">
       {/* light stage (behind the world so the dashboard stays crisp on top) */}
       <div ref={veilRef} className="absolute inset-0 bg-white opacity-0" />
 
@@ -235,7 +266,7 @@ export default function Hero() {
             so fractional coordinates map 1:1 onto the photo */}
         <div
           ref={stageRef}
-          className="absolute will-change-transform"
+          className="absolute"
           style={{
             width: stage.width,
             height: stage.height,
@@ -249,6 +280,8 @@ export default function Hero() {
             src="/hero-v3.avif"
             alt=""
             draggable={false}
+            fetchPriority="high"
+            decoding="async"
             className="absolute inset-0 h-full w-full select-none"
           />
 
@@ -260,7 +293,7 @@ export default function Hero() {
               rides the same transform and can never drift away mid-scroll */}
           <div
             ref={screenRef}
-            className="absolute overflow-hidden rounded-[1px] opacity-0 will-change-transform shadow-[0_0_60px_rgba(80,80,200,0.15)]"
+            className="absolute overflow-hidden rounded-[1px] opacity-0 shadow-[0_0_60px_rgba(80,80,200,0.15)]"
             style={{
               left: `${SCREEN.left * 100}%`,
               top: `${SCREEN.top * 100}%`,
@@ -269,13 +302,15 @@ export default function Hero() {
             }}
           >
             <ScreenFit>
-              <iframe
-                src="/mcard-dash.html"
-                title="MCard Dashboard"
-                loading="eager"
-                scrolling="no"
-                className="block h-full w-full border-0"
-              />
+              {mountScreen && (
+                <iframe
+                  src="/mcard-dash.html"
+                  title="MCard Dashboard"
+                  loading="lazy"
+                  scrolling="no"
+                  className="block h-full w-full border-0"
+                />
+              )}
             </ScreenFit>
             {/* subtle screen sheen so it blends into the photo */}
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.06] via-transparent to-transparent" />
@@ -296,7 +331,9 @@ export default function Hero() {
           className="hero-copy-el mt-9 flex flex-wrap items-center justify-center gap-3 opacity-0"
           onSubmit={(e) => e.preventDefault()}
         >
-          <div className="flex h-[52px] w-[min(400px,82vw)] items-center rounded-full border border-black/10 bg-white/75 pl-6 pr-1.5 shadow-sm backdrop-blur-md">
+          {/* The input keeps outline-none because the ring belongs on the pill
+              that reads as the control, not on the bare text box inside it. */}
+          <div className="flex h-[56px] w-[min(400px,82vw)] items-center rounded-full border border-black/10 bg-white/75 pl-6 pr-1 shadow-sm backdrop-blur-md transition-colors focus-within:border-[#5a58e8]/60 focus-within:ring-2 focus-within:ring-[#5a58e8]/30">
             <label htmlFor="hero-email" className="sr-only">
               Alamat email kerja
             </label>
@@ -305,13 +342,13 @@ export default function Hero() {
               type="email"
               autoComplete="email"
               placeholder="nama@perusahaan.com"
-              className="w-full bg-transparent text-body text-slate-900 outline-none placeholder:text-slate-400"
+              className="w-full bg-transparent text-body text-slate-900 outline-none placeholder:text-slate-500"
             />
-            <button className="h-[40px] shrink-0 whitespace-nowrap rounded-full bg-[#5a58e8] px-5 text-body-sm font-semibold text-white transition-colors hover:bg-[#6c6af4]">
+            <button className="h-[48px] shrink-0 whitespace-nowrap rounded-full bg-[#5a58e8] px-5 text-body-sm font-semibold text-white transition-colors hover:bg-[#6c6af4]">
               Daftar Gratis
             </button>
           </div>
-          <button className="h-[52px] whitespace-nowrap rounded-full border border-black/15 bg-white/60 px-6 text-body-sm font-semibold text-slate-800 backdrop-blur-md transition-colors hover:bg-black/5">
+          <button className="h-[56px] whitespace-nowrap rounded-full border border-black/15 bg-white/60 px-6 text-body-sm font-semibold text-slate-800 backdrop-blur-md transition-colors hover:bg-black/5">
             Lihat Demo
           </button>
         </form>

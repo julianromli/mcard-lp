@@ -95,7 +95,7 @@ function Price({ plan, yearly }: { plan: Plan; yearly: boolean }) {
         {label}
       </span>
       {plan.monthly !== null && plan.monthly > 0 && (
-        <span className="text-body-sm text-slate-400">/bulan</span>
+        <span className="text-body-sm text-slate-500">/bulan</span>
       )}
     </div>
   );
@@ -137,7 +137,7 @@ export function Pricing() {
   }, []);
 
   return (
-    <section ref={root} className="relative bg-white py-[13vh]">
+    <section ref={root} id="harga" className="relative bg-white py-[13vh]">
       <style>{`
         @keyframes price-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .price-anim { animation: price-in 0.35s cubic-bezier(0.22,1,0.36,1); }
@@ -155,20 +155,33 @@ export function Pricing() {
           <span className="font-semibold text-slate-800">dicoba 14 hari gratis</span>.
         </p>
 
-        {/* billing toggle */}
-        <div className="pr-reveal mt-9 inline-flex rounded-full border border-black/10 bg-black/[0.04] p-1">
+        {/* Billing toggle. Two bare buttons announced no state at all — a
+            screen reader heard "Bulanan, button / Tahunan -20%, button" with
+            nothing marking which period was in force. aria-pressed carries it,
+            and the group gets a name so the pair reads as one control. */}
+        <div
+          role="group"
+          aria-label="Periode penagihan"
+          className="pr-reveal mt-9 inline-flex rounded-full border border-black/10 bg-black/[0.04] p-1"
+        >
           {(["Bulanan", "Tahunan"] as const).map((label) => {
             const active = (label === "Tahunan") === yearly;
             return (
               <button
                 key={label}
+                type="button"
+                aria-pressed={active}
                 onClick={() => setYearly(label === "Tahunan")}
-                className={`relative whitespace-nowrap rounded-full px-5 py-2 text-label font-medium transition-colors duration-300 ${
+                className={`relative whitespace-nowrap rounded-full px-5 py-3 text-label font-medium transition-colors duration-300 ${
                   active ? "text-slate-900" : "text-slate-500 hover:text-slate-800"
                 }`}
               >
                 {active && (
-                  <span className="absolute inset-0 rounded-full bg-white shadow-sm transition-all" style={{ zIndex: 0 }} />
+                  <span
+                    aria-hidden
+                    className="absolute inset-0 rounded-full bg-white shadow-sm"
+                    style={{ zIndex: 0 }}
+                  />
                 )}
                 <span className="relative z-10">
                   {label}
@@ -206,7 +219,7 @@ export function Pricing() {
             <div className="mt-6 min-h-[76px]">
               <Price plan={p} yearly={yearly} />
               {yearly && p.monthly !== null && p.monthly > 0 && (
-                <p className="mt-2 text-caption tabular-nums text-slate-400">
+                <p className="mt-2 text-caption tabular-nums text-slate-500">
                   Ditagih Rp {(p.yearly * 12 * 1000).toLocaleString("id-ID")} per tahun
                 </p>
               )}
@@ -224,11 +237,11 @@ export function Pricing() {
 
             <div className="my-7 border-t border-dashed border-black/10" />
 
-            <p className="text-eyebrow font-semibold uppercase text-slate-400">{p.includes}</p>
+            <p className="text-eyebrow font-semibold uppercase text-slate-500">{p.includes}</p>
             <ul className="mt-5 space-y-4">
               {p.feats.map((f) => (
                 <li key={f.text} className="flex items-center gap-3 text-body-sm text-slate-600">
-                  <f.icon size={17} className={`shrink-0 ${p.featured ? "text-[#5a58e8]" : "text-slate-400"}`} />
+                  <f.icon size={17} className={`shrink-0 ${p.featured ? "text-[#5a58e8]" : "text-slate-500"}`} />
                   <span>
                     {f.strong && <span className="font-semibold text-slate-900">{f.strong} </span>}
                     {f.text}

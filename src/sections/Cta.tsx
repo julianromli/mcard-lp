@@ -36,7 +36,9 @@ export default function Cta() {
           className="cta-reveal mt-9 flex flex-wrap items-center justify-center gap-3"
           onSubmit={(e) => e.preventDefault()}
         >
-          <div className="flex h-[52px] w-[min(400px,82vw)] items-center rounded-full border border-black/10 bg-black/[0.03] pl-6 pr-1.5">
+          {/* The input keeps outline-none because the ring belongs on the pill
+              that reads as the control, not on the bare text box inside it. */}
+          <div className="flex h-[56px] w-[min(400px,82vw)] items-center rounded-full border border-black/10 bg-black/[0.03] pl-6 pr-1 transition-colors focus-within:border-[#5a58e8]/60 focus-within:ring-2 focus-within:ring-[#5a58e8]/30">
             <label htmlFor="cta-email" className="sr-only">
               Alamat email kerja
             </label>
@@ -45,13 +47,13 @@ export default function Cta() {
               type="email"
               autoComplete="email"
               placeholder="nama@perusahaan.com"
-              className="w-full bg-transparent text-body text-slate-900 outline-none placeholder:text-slate-400"
+              className="w-full bg-transparent text-body text-slate-900 outline-none placeholder:text-slate-500"
             />
-            <button className="h-[40px] shrink-0 whitespace-nowrap rounded-full bg-[#5a58e8] px-5 text-body-sm font-semibold text-white transition-colors hover:bg-[#6c6af4]">
+            <button className="h-[48px] shrink-0 whitespace-nowrap rounded-full bg-[#5a58e8] px-5 text-body-sm font-semibold text-white transition-colors hover:bg-[#6c6af4]">
               Daftar Gratis
             </button>
           </div>
-          <button className="h-[52px] whitespace-nowrap rounded-full border border-black/15 px-6 text-body-sm font-semibold text-slate-800 transition-colors hover:bg-black/5">
+          <button className="h-[56px] whitespace-nowrap rounded-full border border-black/15 px-6 text-body-sm font-semibold text-slate-800 transition-colors hover:bg-black/5">
             Hubungi Sales
           </button>
         </form>
