@@ -1,0 +1,325 @@
+import { useLayoutEffect, useRef, useState } from "react";
+import { gsap, ScrollTrigger, MOTION_OK, MOTION_REDUCED } from "@/lib/motion";
+
+const DW = 1600;
+const DH = 904;
+
+/* ---- measured geometry of the hero image (3840x2000) ---- */
+const IMG_W = 3840;
+const IMG_H = 2000;
+
+/* laptop screen rect as fractions of the image (measured, not guessed) */
+const SCREEN = {
+  left: 0.47760,
+  top: 0.69850,
+  width: 0.04010,
+  height: 0.04350,
+};
+/* screen center = zoom focal point */
+const FOCAL_X = 0.49766;
+const FOCAL_Y = 0.72025;
+
+function coverRect(vw: number, vh: number) {
+  const s = Math.max(vw / IMG_W, vh / IMG_H);
+  const w = IMG_W * s;
+  const h = IMG_H * s;
+  return { width: w, height: h, left: (vw - w) / 2, top: (vh - h) / 2 };
+}
+
+/* zoom factor that makes the laptop screen fill the viewport (with margin),
+   whatever the cover-fit rect currently is */
+function zoomFor(vw: number, vh: number) {
+  const r = coverRect(vw, vh);
+  const screenW = r.width * SCREEN.width;
+  const screenH = r.height * SCREEN.height;
+  return 1.02 * Math.max(vw / screenW, vh / screenH);
+}
+
+/* Scales the fixed dashboard canvas to fill the screen overlay,
+   whatever size that overlay currently renders at. */
+function ScreenFit({ children }: { children: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [s, setS] = useState(0.05);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const update = () => setS(el.clientWidth / DW);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  return (
+    <div ref={ref} className="h-full w-full overflow-hidden">
+      <div style={{ width: DW, height: DH, transform: `scale(${s})`, transformOrigin: "top left" }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+export default function Hero() {
+  const root = useRef<HTMLElement>(null);
+  const introRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const veilRef = useRef<HTMLDivElement>(null);
+  const dimRef = useRef<HTMLDivElement>(null);
+  const screenRef = useRef<HTMLDivElement>(null);
+  const copyRef = useRef<HTMLDivElement>(null);
+  const discRef = useRef<HTMLDivElement>(null);
+
+  const zoomRef = useRef(
+    typeof window === "undefined" ? 20 : zoomFor(window.innerWidth, window.innerHeight)
+  );
+  /* end-state translation so the screen lands exactly on the viewport center
+     (the focal point itself sits below center in the unzoomed photo) */
+  const driftRef = useRef({ x: 0, y: 0 });
+
+  const [stage, setStage] = useState(() =>
+    typeof window === "undefined"
+      ? { width: 0, height: 0, left: 0, top: 0 }
+      : coverRect(window.innerWidth, window.innerHeight)
+  );
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const r = coverRect(vw, vh);
+      setStage(r);
+      zoomRef.current = zoomFor(vw, vh);
+      driftRef.current = {
+        x: vw / 2 - (r.left + FOCAL_X * r.width),
+        y: vh / 2 - (r.top + FOCAL_Y * r.height),
+      };
+    };
+    measure();
+
+    /* Raw resize events fire far faster than we can usefully re-render, and
+       every one of them used to run a full setStage(). Coalesce to one
+       measurement per frame, then let ScrollTrigger recompute the pin against
+       the new viewport — without the refresh the pin keeps the stale end
+       distance and the scrub desyncs after a resize. */
+    let frame = 0;
+    const onResize = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        measure();
+        ScrollTrigger.refresh();
+      });
+    };
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  /* Chromium bitmap-upscales transformed layers while they move and only
+     re-rasters them sharply when their geometry changes, so once scrolling
+     settles we nudge the overlay size by half a pixel to force a crisp
+     re-raster at the current zoom level */
+  useLayoutEffect(() => {
+    const el = screenRef.current;
+    if (!el) return;
+    let t: ReturnType<typeof setTimeout>;
+    const bump = () => {
+      el.style.width = `calc(${SCREEN.width * 100}% + 0.5px)`;
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          el.style.width = `${SCREEN.width * 100}%`;
+        }, 60);
+      });
+    };
+    const onScroll = () => {
+      clearTimeout(t);
+      t = setTimeout(bump, 300);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      clearTimeout(t);
+    };
+  }, []);
+
+  useLayoutEffect(() => {
+    const mm = gsap.matchMedia(root);
+
+    /* The hero copy ships with opacity-0 in the markup so the intro can fade
+       it in, which means skipping the animation would leave the headline
+       invisible. Readers who ask for reduced motion get the end state applied
+       directly: static photo, copy visible, no pin and no 2700px scrub. */
+    mm.add(MOTION_REDUCED, () => {
+      gsap.set([".hero-copy-el", discRef.current], { autoAlpha: 1, y: 0 });
+    });
+
+    mm.add(MOTION_OK, () => {
+      /* ---------- intro (plays once on load) ---------- */
+      const intro = gsap.timeline({ defaults: { ease: "power2.out" } });
+      intro
+        .fromTo(introRef.current, { scale: 1.12 }, { scale: 1, duration: 1.7 })
+        .fromTo(
+          ".hero-copy-el",
+          { y: 30, autoAlpha: 0 },
+          { y: 0, autoAlpha: 1, duration: 0.95, stagger: 0.09 },
+          0.3
+        )
+        .fromTo(discRef.current, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.7 }, 1.0);
+
+      /* ---------- scroll-driven cinematic push-in ---------- */
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: root.current,
+          start: "top top",
+          end: "+=2700",
+          scrub: 1,
+          pin: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      tl
+        // hero copy exits early
+        .to(copyRef.current, { autoAlpha: 0, y: -70, duration: 0.15, ease: "power1.in" }, 0)
+        .to(discRef.current, { autoAlpha: 0, duration: 0.08 }, 0)
+        // camera push toward the laptop screen — the stage carries BOTH the
+        // photo and the React dashboard glued onto the screen coordinates
+        .fromTo(
+          stageRef.current,
+          { scale: 1, x: 0, y: 0 },
+          {
+            scale: () => zoomRef.current,
+            x: () => driftRef.current.x,
+            y: () => driftRef.current.y,
+            duration: 1,
+            ease: "power2.inOut",
+          },
+          0
+        )
+        // the crisp React dashboard fades in and resolves from a slight blur,
+        // reading as the screen "sharpening" while we approach
+        .fromTo(
+          screenRef.current,
+          { autoAlpha: 0, filter: "blur(8px)" },
+          { autoAlpha: 1, filter: "blur(0px)", duration: 0.3, ease: "power1.inOut" },
+          0.18
+        )
+        // dark stage fades in behind everything, fully in before the photo leaves
+        .fromTo(veilRef.current, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5, ease: "power1.inOut" }, 0.32)
+        // the photo dims through a cheap overlay (no filter: a blurred layer at
+        // this zoom scale exceeds GPU texture limits and renders black), then
+        // dissolves slowly so the handoff never reads as a hard cut
+        .to(dimRef.current, { autoAlpha: 0.55, duration: 0.35, ease: "power1.inOut" }, 0.3)
+        .to(imgRef.current, { autoAlpha: 0, duration: 0.45, ease: "power1.inOut" }, 0.45);
+    });
+
+    const onLoad = () => ScrollTrigger.refresh();
+    window.addEventListener("load", onLoad);
+    return () => {
+      window.removeEventListener("load", onLoad);
+      mm.revert();
+    };
+  }, []);
+
+  return (
+    <section ref={root} id="hero" className="relative h-screen overflow-hidden bg-white">
+      {/* light stage (behind the world so the dashboard stays crisp on top) */}
+      <div ref={veilRef} className="absolute inset-0 bg-white opacity-0" />
+
+      {/* world */}
+      <div ref={introRef} className="absolute inset-0">
+        {/* photo stage: exactly the cover-fit rect of the image,
+            so fractional coordinates map 1:1 onto the photo */}
+        <div
+          ref={stageRef}
+          className="absolute will-change-transform"
+          style={{
+            width: stage.width,
+            height: stage.height,
+            left: stage.left,
+            top: stage.top,
+            transformOrigin: `${FOCAL_X * 100}% ${FOCAL_Y * 100}%`,
+          }}
+        >
+          <img
+            ref={imgRef}
+            src="/hero-v3.avif"
+            alt=""
+            draggable={false}
+            className="absolute inset-0 h-full w-full select-none"
+          />
+
+          {/* dimming overlay for the photo dissolve (opacity-only, GPU-cheap) */}
+          <div ref={dimRef} className="pointer-events-none absolute inset-0 bg-white opacity-0" />
+
+          {/* the laptop screen: the real MCard dashboard page (self-contained
+              HTML) iframed onto the exact screen coordinates of the photo, so it
+              rides the same transform and can never drift away mid-scroll */}
+          <div
+            ref={screenRef}
+            className="absolute overflow-hidden rounded-[1px] opacity-0 will-change-transform shadow-[0_0_60px_rgba(80,80,200,0.15)]"
+            style={{
+              left: `${SCREEN.left * 100}%`,
+              top: `${SCREEN.top * 100}%`,
+              width: `${SCREEN.width * 100}%`,
+              height: `${SCREEN.height * 100}%`,
+            }}
+          >
+            <ScreenFit>
+              <iframe
+                src="/mcard-dash.html"
+                title="MCard Dashboard"
+                loading="eager"
+                scrolling="no"
+                className="block h-full w-full border-0"
+              />
+            </ScreenFit>
+            {/* subtle screen sheen so it blends into the photo */}
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.06] via-transparent to-transparent" />
+          </div>
+        </div>
+      </div>
+
+      {/* hero copy */}
+      <div ref={copyRef} className="relative z-20 flex h-full flex-col items-center px-6 pt-[12.5vh]">
+        <h1 className="hero-copy-el text-center text-[clamp(40px,4.8vw,68px)] font-medium leading-[1.04] tracking-[-0.025em] text-slate-900 opacity-0">
+          Kendali penuh atas pengeluaran bisnismu
+        </h1>
+        <p className="hero-copy-el mt-5 max-w-[580px] text-center text-[17px] leading-[1.6] text-slate-600 opacity-0">
+          Terbitkan kartu virtual tanpa batas, atur anggaran per tim, dan pantau tiap transaksi real-time.
+          Semua dari satu dashboard.
+        </p>
+        <form
+          className="hero-copy-el mt-9 flex flex-wrap items-center justify-center gap-3 opacity-0"
+          onSubmit={(e) => e.preventDefault()}
+        >
+          <div className="flex h-[52px] w-[min(400px,82vw)] items-center rounded-full border border-black/10 bg-white/75 pl-6 pr-1.5 shadow-sm backdrop-blur-md">
+            <input
+              type="email"
+              placeholder="Masukkan email kamu"
+              className="w-full bg-transparent text-[15px] text-slate-900 outline-none placeholder:text-slate-400"
+            />
+            <button className="h-[40px] shrink-0 rounded-full bg-[#5a58e8] px-5 text-[14px] font-medium text-white transition-colors hover:bg-[#6c6af4]">
+              Daftar Gratis
+            </button>
+          </div>
+          <button className="h-[52px] rounded-full border border-black/15 bg-white/60 px-6 text-[15px] font-medium text-slate-800 backdrop-blur-md transition-colors hover:bg-black/5">
+            Lihat Demo
+          </button>
+        </form>
+      </div>
+
+      {/* regulatory pill */}
+      <div
+        ref={discRef}
+        className="absolute bottom-5 left-1/2 z-20 w-[max-content] max-w-[92vw] -translate-x-1/2 rounded-xl bg-white/75 px-5 py-2.5 text-center text-[12.5px] leading-snug text-slate-600 opacity-0 shadow-sm backdrop-blur"
+      >
+        MCard adalah platform spend management dari Mayar, bukan bank. Kartu diterbitkan lewat partner
+        berlisensi yang terdaftar dan diawasi. Daftar cuma 2 menit, kartu langsung aktif.
+      </div>
+    </section>
+  );
+}

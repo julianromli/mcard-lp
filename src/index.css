@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@theme {
+  /* Radius scale carried over from the v3 config (--radius was 0.625rem),
+     so the handful of rounded-md/lg/xl usages keep their exact geometry. */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.875rem;
+}
+
+@layer base {
+  /* Tailwind v4 defaults border-color to currentColor; v3 plus the shadcn
+     preset defaulted it to a light grey. Preserved so bare `border` utilities
+     keep rendering as a hairline instead of inheriting the text colour. */
+  *,
+  ::after,
+  ::before {
+    border-color: hsl(240 5.9% 90%);
+  }
+
+  body {
+    background-color: #fff;
+    color: var(--color-slate-900);
+  }
+}
+
+/* The scroll-driven hero pins for 2700px and scrubs a camera push-in. For
+   readers who ask for less motion, GSAP animations are neutralised in JS
+   (see src/lib/motion.ts); this covers the CSS-only transitions. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::after,
+  ::before {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- The hero photo is the LCP element but sits behind the JS bundle in the
+         discovery order, so it is fetched up front at high priority instead. -->
+    <link
+      rel="preload"
+      as="image"
+      href="./hero-v3.avif"
+      type="image/avif"
+      fetchpriority="high"
+    />
+    <title>MCard · Kartu Virtual & Spend Management | Mayar</title>
+    <meta
+      name="description"
+      content="Terbitkan kartu virtual tanpa batas, atur anggaran per tim, dan pantau tiap transaksi real-time. Semua dari satu dashboard."
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
