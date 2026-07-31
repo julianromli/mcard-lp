@@ -226,6 +226,7 @@ export function Pricing() {
             </div>
 
             <button
+              type="button"
               className={`mt-6 w-full whitespace-nowrap rounded-full py-3.5 text-body-sm font-semibold transition-colors duration-300 ${
                 p.featured
                   ? "bg-[#5a58e8] text-white hover:bg-[#6a68f2]"

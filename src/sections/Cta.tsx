@@ -49,11 +49,19 @@ export default function Cta() {
               placeholder="nama@perusahaan.com"
               className="w-full bg-transparent text-body text-slate-900 outline-none placeholder:text-slate-500"
             />
-            <button className="h-[48px] shrink-0 whitespace-nowrap rounded-full bg-[#5a58e8] px-5 text-body-sm font-semibold text-white transition-colors hover:bg-[#6c6af4]">
+            <button
+              type="submit"
+              className="h-[48px] shrink-0 whitespace-nowrap rounded-full bg-[#5a58e8] px-5 text-body-sm font-semibold text-white transition-colors hover:bg-[#6c6af4]"
+            >
               Daftar Gratis
             </button>
           </div>
-          <button className="h-[56px] whitespace-nowrap rounded-full border border-black/15 px-6 text-body-sm font-semibold text-slate-800 transition-colors hover:bg-black/5">
+          {/* type="button", or it inherits the default and signs the visitor up
+              for the newsletter when they ask to talk to sales. */}
+          <button
+            type="button"
+            className="h-[56px] whitespace-nowrap rounded-full border border-black/15 px-6 text-body-sm font-semibold text-slate-800 transition-colors hover:bg-black/5"
+          >
             Hubungi Sales
           </button>
         </form>

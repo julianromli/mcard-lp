@@ -161,7 +161,10 @@ export default function Footer() {
           {/* market */}
           <div className="ft-col opacity-0">
             <h4 className="mb-5 text-body font-semibold text-slate-900">Wilayah</h4>
-            <button className="group flex items-center gap-2.5 whitespace-nowrap rounded-xl border border-black/10 bg-white px-4 py-3 text-body-sm text-slate-700 shadow-sm transition-colors hover:border-black/25 hover:bg-black/[0.03]">
+            <button
+              type="button"
+              className="group flex items-center gap-2.5 whitespace-nowrap rounded-xl border border-black/10 bg-white px-4 py-3 text-body-sm text-slate-700 shadow-sm transition-colors hover:border-black/25 hover:bg-black/[0.03]"
+            >
               <span className="text-body leading-none">🇮🇩</span>
               Indonesia
               <ArrowRight className="h-3.5 w-3.5 text-slate-500 transition-transform group-hover:translate-x-0.5" />
