@@ -30,16 +30,21 @@ export default function Cta() {
           Kendalikan pengeluaran bisnismu hari ini
         </h2>
         <p className="cta-reveal mt-4 max-w-[480px] text-[16px] leading-relaxed text-slate-500">
-          Gabung bareng 149.969+ bisnis yang sudah pakai Mayar. Tanpa kartu kredit, tanpa kontrak.
+          Gabung dengan 150.000+ bisnis yang sudah pakai Mayar. Tanpa kartu kredit, tanpa kontrak.
         </p>
         <form
           className="cta-reveal mt-9 flex flex-wrap items-center justify-center gap-3"
           onSubmit={(e) => e.preventDefault()}
         >
           <div className="flex h-[52px] w-[min(400px,82vw)] items-center rounded-full border border-black/10 bg-black/[0.03] pl-6 pr-1.5">
+            <label htmlFor="cta-email" className="sr-only">
+              Alamat email kerja
+            </label>
             <input
+              id="cta-email"
               type="email"
-              placeholder="Masukkan email kamu"
+              autoComplete="email"
+              placeholder="nama@perusahaan.com"
               className="w-full bg-transparent text-[15px] text-slate-900 outline-none placeholder:text-slate-400"
             />
             <button className="h-[40px] shrink-0 rounded-full bg-[#5a58e8] px-5 text-[14px] font-medium text-white transition-colors hover:bg-[#6c6af4]">

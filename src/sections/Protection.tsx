@@ -93,10 +93,10 @@ function ControlToggles() {
 /* ---------------- section ---------------- */
 
 const STATS = [
-  { value: 150, format: (v: number) => `${Math.round(v)}K+`, label: "bisnis sudah percaya" },
+  { value: 150, format: (v: number) => `${Math.round(v)}K+`, label: "bisnis pakai Mayar" },
   { value: null as number | null, text: "Real-time", label: "notifikasi tiap transaksi" },
-  { value: 100, format: (v: number) => `${Math.round(v)}%`, label: "transaksi kelacak" },
-  { value: 38, format: (v: number) => `${Math.round(v)}%`, label: "lebih hemat dari pengeluaran tak terduga" },
+  { value: 100, format: (v: number) => `${Math.round(v)}%`, label: "transaksi tercatat" },
+  { value: 38, format: (v: number) => `${Math.round(v)}%`, label: "pengeluaran tak terduga berkurang" },
 ];
 
 const CARDS = [
@@ -107,13 +107,13 @@ const CARDS = [
   },
   {
     visual: <SecurityRings />,
-    title: "Keamanan naik level",
-    body: "Proteksi fraud real-time, verifikasi MFA, dan nomor kartu plus CVV yang cuma kelihatan setelah verifikasi PIN 6 digit. Semua jalan di belakang layar.",
+    title: "Keamanan berlapis",
+    body: "Proteksi fraud real-time, verifikasi MFA, dan nomor kartu plus CVV yang hanya terlihat setelah verifikasi PIN 6 digit.",
   },
   {
     visual: <ControlToggles />,
-    title: "Kontrol di ujung jari",
-    body: "Tentukan siapa yang bisa lihat, mindahin, atau narik dana. Lengkap dengan alur approval, kunci kartu, dan izin per orang.",
+    title: "Kontrol di tangan kamu",
+    body: "Tentukan siapa yang bisa melihat, memindahkan, atau menarik dana. Lengkap dengan alur persetujuan, kunci kartu, dan izin per anggota tim.",
   },
 ];
 
@@ -292,9 +292,7 @@ export default function Protection() {
       <div className="mx-auto max-w-[1240px]">
         {/* headline */}
         <h2 className="prot-headline mx-auto max-w-[720px] text-center text-[clamp(30px,3.4vw,44px)] font-medium leading-[1.18] tracking-[-0.02em] text-slate-900 opacity-0">
-          Kamu bangun bisnis buat jangka panjang.
-          <br />
-          Kami juga.
+          Kenapa bisnis percaya menaruh uangnya di sini
         </h2>
 
         {/* stats */}
@@ -327,7 +325,7 @@ export default function Protection() {
 
         {/* protection */}
         <h3 className="prot-subhead mt-[7vh] max-w-[560px] text-[clamp(24px,2.4vw,32px)] font-medium leading-[1.25] tracking-[-0.015em] text-slate-900 opacity-0">
-          Proteksi standar berhenti di situ. Kami jalan terus.
+          Perlindungan yang tidak berhenti di standar minimum.
         </h3>
 
         <div className="prot-cards mt-10 grid gap-6 md:grid-cols-3">

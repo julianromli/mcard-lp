@@ -130,7 +130,7 @@ export function Brands() {
       {/* header */}
       <div className="br-head mx-auto max-w-[820px] px-6 text-center">
         <h2 className="br-reveal text-[clamp(38px,5vw,64px)] font-semibold leading-[1.05] tracking-[-0.03em] text-slate-900">
-          Nyambung dengan tools yang kamu pakai tiap hari
+          Terhubung dengan tools yang kamu pakai tiap hari
         </h2>
         <div className="br-reveal mt-8">
           <a

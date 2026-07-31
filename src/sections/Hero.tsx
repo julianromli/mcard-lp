@@ -297,9 +297,14 @@ export default function Hero() {
           onSubmit={(e) => e.preventDefault()}
         >
           <div className="flex h-[52px] w-[min(400px,82vw)] items-center rounded-full border border-black/10 bg-white/75 pl-6 pr-1.5 shadow-sm backdrop-blur-md">
+            <label htmlFor="hero-email" className="sr-only">
+              Alamat email kerja
+            </label>
             <input
+              id="hero-email"
               type="email"
-              placeholder="Masukkan email kamu"
+              autoComplete="email"
+              placeholder="nama@perusahaan.com"
               className="w-full bg-transparent text-[15px] text-slate-900 outline-none placeholder:text-slate-400"
             />
             <button className="h-[40px] shrink-0 rounded-full bg-[#5a58e8] px-5 text-[14px] font-medium text-white transition-colors hover:bg-[#6c6af4]">
@@ -318,7 +323,7 @@ export default function Hero() {
         className="absolute bottom-5 left-1/2 z-20 w-[max-content] max-w-[92vw] -translate-x-1/2 rounded-xl bg-white/75 px-5 py-2.5 text-center text-[12.5px] leading-snug text-slate-600 opacity-0 shadow-sm backdrop-blur"
       >
         MCard adalah platform spend management dari Mayar, bukan bank. Kartu diterbitkan lewat partner
-        berlisensi yang terdaftar dan diawasi. Daftar cuma 2 menit, kartu langsung aktif.
+        berlisensi yang terdaftar dan diawasi.
       </div>
     </section>
   );

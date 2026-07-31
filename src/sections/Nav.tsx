@@ -13,7 +13,7 @@ function LogoMark({ className = "h-7 w-7" }: { className?: string }) {
   );
 }
 
-const MENU = ["Fitur", "Kartu Virtual", "Cara Kerja"];
+const MENU = ["Fitur", "Keamanan", "Integrasi"];
 
 export default function Nav() {
   const [solid, setSolid] = useState(false);

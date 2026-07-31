@@ -7,28 +7,28 @@ import { Check, Headphones, TrendingUp } from "lucide-react";
 /* ------------------------------------------------------------------ */
 const ITEMS = [
   {
-    title: "Didesain buat kamu",
-    desc: "Terbitkan kartu, top-up saldo, dan pantau semua pengeluaran dari satu dashboard yang rapi.",
+    title: "Semua saldo dalam satu tampilan",
+    desc: "Pantau saldo operasional dan cadangan, kirim dana, dan terbitkan kartu dari dashboard yang sama.",
     bg: "linear-gradient(150deg,#f6f6fb 0%,#eeeef6 55%,#f3f2fa 100%)",
   },
   {
     title: "Diterima di mana-mana",
-    desc: "Kartu virtual dan fisik yang jalan di jutaan merchant, online maupun contactless.",
+    desc: "Kartu virtual yang jalan di jutaan merchant, online maupun contactless.",
     bg: "linear-gradient(150deg,#eef0f8 0%,#e9eaf3 55%,#efeaf6 100%)",
   },
   {
-    title: "Ikut tumbuh bareng",
-    desc: "Limit kartu dan modal yang naik seiring bisnismu berkembang. Tanpa jaminan pribadi.",
+    title: "Limit yang ikut tumbuh",
+    desc: "Limit kartu naik seiring pendapatan bisnismu berkembang, tanpa pengajuan ulang tiap bulan.",
     bg: "linear-gradient(150deg,#f1edf8 0%,#eae6f2 55%,#f3edf5 100%)",
   },
   {
     title: "Jelas dan simpel",
-    desc: "Saldo real-time, transaksi gampang dicari, dan laporan yang enak dibaca.",
+    desc: "Saldo real-time, transaksi mudah dicari, dan laporan yang siap diekspor.",
     bg: "linear-gradient(150deg,#ecf3f4 0%,#e8edf1 55%,#ecf1f2 100%)",
   },
   {
     title: "Selalu ada yang bantu",
-    desc: "Jawaban instan di aplikasi, plus tim support manusia asli kapan pun kamu butuh.",
+    desc: "Jawaban instan di aplikasi, plus tim support manusia kapan pun kamu butuh.",
     bg: "linear-gradient(150deg,#f3eff2 0%,#ece8ec 55%,#f1ecee 100%)",
   },
 ];
@@ -87,7 +87,7 @@ function MediaCard({ i }: { i: number }) {
             </div>
             <p className="mt-6 font-mono text-[15px] tracking-[0.18em] text-white/80">5312&nbsp;&nbsp;••••&nbsp;&nbsp;••••&nbsp;&nbsp;4477</p>
             <div className="mt-4 flex items-end justify-between">
-              <p className="text-[11px] uppercase tracking-[0.14em] text-white/45">Jane Whitfield</p>
+              <p className="text-[11px] uppercase tracking-[0.14em] text-white/45">Sari Wijaya</p>
               <p className="text-[11px] text-white/45">12/29</p>
             </div>
           </div>
@@ -111,7 +111,7 @@ function MediaCard({ i }: { i: number }) {
             <div className="mt-3 h-2 overflow-hidden rounded-full bg-black/[0.07]">
               <div className="h-full w-[38%] rounded-full bg-gradient-to-r from-[#5a58e8] to-[#8b89ff]" />
             </div>
-            <p className="mt-2 text-[11px] text-slate-400">38% kepakai · limit naik ngikutin pendapatan</p>
+            <p className="mt-2 text-[11px] text-slate-400">38% terpakai · limit menyesuaikan pendapatan</p>
           </div>
           <div className="rounded-2xl border border-black/[0.06] bg-white/80 p-4">
             <p className="text-[10px] uppercase tracking-[0.14em] text-slate-400">Limit tambahan tersedia</p>
@@ -150,14 +150,14 @@ function MediaCard({ i }: { i: number }) {
           </div>
           <div>
             <p className="text-[14px] font-semibold text-slate-900">Support Mayar</p>
-            <p className="text-[11px] text-emerald-600">Online · bales dalam hitungan detik</p>
+            <p className="text-[11px] text-emerald-600">Online · balas dalam hitungan detik</p>
           </div>
         </div>
         <div className="max-w-[80%] self-start rounded-2xl rounded-bl-sm border border-black/[0.07] bg-white px-4 py-3 text-[13px] text-slate-700 shadow-sm">
-          Gimana cara naikin limit transfer harian?
+          Bagaimana cara menaikkan limit transfer harian?
         </div>
         <div className="max-w-[85%] self-end rounded-2xl rounded-br-sm bg-[#5a58e8] px-4 py-3 text-[13px] text-white">
-          Beres. Limit transfer harianmu sekarang Rp 500 jt. Ada lagi yang bisa dibantu?
+          Bisa diajukan dari Pengaturan · Limit. Saya bantu prosesnya sekarang?
         </div>
       </div>
     </CardChrome>
@@ -215,10 +215,10 @@ export function Everyday() {
       {/* header */}
       <div className="ev-head mx-auto max-w-[820px] px-6 text-center">
         <h2 className="ev-reveal text-[clamp(38px,5vw,64px)] font-semibold leading-[1.05] tracking-[-0.03em] text-slate-900">
-          Aplikasi uang harianmu
+          Satu tempat buat semua pengeluaran bisnis
         </h2>
         <p className="ev-reveal mx-auto mt-5 max-w-[560px] text-[17px] leading-[1.6] text-slate-500">
-          Pembayaran fleksibel, kartu pintar, insight real-time, dan tim support yang beneran bales.
+          Kartu, anggaran, dan laporan dalam satu dashboard — plus tim support yang balas cepat.
         </p>
       </div>
 

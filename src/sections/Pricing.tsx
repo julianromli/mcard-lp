@@ -25,7 +25,7 @@ const PLANS: Plan[] = [
     monthly: 0,
     yearly: 0,
     includes: "Paket Starter termasuk:",
-    cta: "Mulai Gratis",
+    cta: "Daftar Gratis",
     feats: [
       { icon: CreditCard, strong: "3", text: "kartu virtual" },
       { icon: Users, strong: "1", text: "anggota tim" },
@@ -74,9 +74,9 @@ const PLANS: Plan[] = [
 
 const TESTI_STATS = [
   { value: "−38%", label: "pengeluaran tak terduga" },
-  { value: "5 → 1", label: "alat dikonsolidasi" },
+  { value: "5 → 1", label: "alat jadi satu" },
   { value: "12 jam", label: "hemat per minggu" },
-  { value: "100%", label: "transaksi kelacak" },
+  { value: "100%", label: "transaksi tercatat" },
 ];
 
 function Price({ plan, yearly }: { plan: Plan; yearly: boolean }) {
@@ -87,10 +87,10 @@ function Price({ plan, yearly }: { plan: Plan; yearly: boolean }) {
         ? "Gratis"
         : `Rp ${(yearly ? plan.yearly : plan.monthly).toLocaleString("id-ID")}rb`;
   return (
-    <div className="flex items-baseline gap-2">
+    <div className="flex items-baseline gap-2 whitespace-nowrap">
       <span
         key={label}
-        className="price-anim inline-block text-[52px] font-semibold leading-none tracking-[-0.03em] text-slate-900"
+        className="price-anim inline-block text-[clamp(38px,3.6vw,52px)] font-semibold leading-none tracking-[-0.03em] text-slate-900"
       >
         {label}
       </span>
@@ -145,16 +145,13 @@ export function Pricing() {
 
       {/* header */}
       <div className="pr-head mx-auto max-w-[820px] px-6 text-center">
-        <span className="pr-reveal inline-block rounded-full border border-black/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-500">
-          Harga
-        </span>
-        <h2 className="pr-reveal mt-6 text-[clamp(38px,5vw,64px)] font-semibold leading-[1.08] tracking-[-0.03em] text-slate-900">
+        <h2 className="pr-reveal text-[clamp(38px,5vw,64px)] font-semibold leading-[1.08] tracking-[-0.03em] text-slate-900">
           Harga transparan,
           <br />
           tanpa biaya tersembunyi
         </h2>
         <p className="pr-reveal mt-5 text-[17px] text-slate-500">
-          Mulai gratis. Naik kelas pas tim kamu makin gede. Semua paket berbayar bisa{" "}
+          Mulai gratis. Naik paket saat tim kamu bertambah. Semua paket berbayar bisa{" "}
           <span className="font-semibold text-slate-800">dicoba 14 hari gratis</span>.
         </p>
 
@@ -204,11 +201,13 @@ export function Pricing() {
             <h3 className="text-[22px] font-semibold text-slate-900">{p.name}</h3>
             <p className="mt-2 min-h-[44px] text-[14px] leading-[1.5] text-slate-500">{p.tagline}</p>
 
-            <div className="mt-6">
+            {/* fixed height so the yearly billing note on one card can't push
+                its CTA below the others' */}
+            <div className="mt-6 min-h-[76px]">
               <Price plan={p} yearly={yearly} />
               {yearly && p.monthly !== null && p.monthly > 0 && (
                 <p className="mt-2 text-[12px] text-slate-400">
-                  <span className="line-through">Rp {p.monthly}rb</span> ditagih tahunan
+                  Ditagih Rp {(p.yearly * 12 * 1000).toLocaleString("id-ID")} per tahun
                 </p>
               )}
             </div>
