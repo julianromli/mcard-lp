@@ -14,7 +14,7 @@ function CoverageBars() {
           MCard
         </p>
         <div
-          className="prot-bar-m w-full origin-bottom rounded-[14px] bg-[#5a58e8] shadow-[0_0_70px_6px_rgba(90,88,232,0.30)]"
+          className="prot-bar-m w-full origin-bottom rounded-[14px] bg-brand shadow-[0_0_70px_6px_rgba(12,82,239,0.30)]"
           style={{ height: "68%" }}
         />
       </div>
@@ -38,20 +38,20 @@ function CoverageBars() {
 function SecurityRings() {
   return (
     <div className="relative flex h-full w-full items-center justify-center">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(90,88,232,0.07),transparent_65%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(12,82,239,0.07),transparent_65%)]" />
       <svg viewBox="0 0 320 320" className="prot-rings h-[86%] w-[86%]">
         <defs>
           <radialGradient id="ringGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="60%" stopColor="rgba(90,88,232,0.06)" />
-            <stop offset="100%" stopColor="rgba(90,88,232,0)" />
+            <stop offset="60%" stopColor="rgba(12,82,239,0.06)" />
+            <stop offset="100%" stopColor="rgba(12,82,239,0)" />
           </radialGradient>
         </defs>
-        <circle cx="160" cy="160" r="150" fill="none" stroke="rgba(90,88,232,0.14)" strokeWidth="1.5" />
-        <circle cx="160" cy="160" r="118" fill="none" stroke="rgba(90,88,232,0.18)" strokeWidth="1.5" />
-        <circle cx="160" cy="160" r="88" fill="url(#ringGlow)" stroke="rgba(90,88,232,0.24)" strokeWidth="1.5" />
-        <circle cx="160" cy="160" r="60" fill="rgba(90,88,232,0.06)" stroke="rgba(90,88,232,0.32)" strokeWidth="1.5" />
+        <circle cx="160" cy="160" r="150" fill="none" stroke="rgba(12,82,239,0.14)" strokeWidth="1.5" />
+        <circle cx="160" cy="160" r="118" fill="none" stroke="rgba(12,82,239,0.18)" strokeWidth="1.5" />
+        <circle cx="160" cy="160" r="88" fill="url(#ringGlow)" stroke="rgba(12,82,239,0.24)" strokeWidth="1.5" />
+        <circle cx="160" cy="160" r="60" fill="rgba(12,82,239,0.06)" stroke="rgba(12,82,239,0.32)" strokeWidth="1.5" />
       </svg>
-      <div className="prot-lock absolute flex h-11 w-11 items-center justify-center rounded-full bg-[#5a58e8] shadow-[0_8px_24px_rgba(90,88,232,0.4)]">
+      <div className="prot-lock absolute flex h-11 w-11 items-center justify-center rounded-full bg-brand shadow-[0_8px_24px_rgba(12,82,239,0.4)]">
         <Lock className="h-5 w-5 text-white" strokeWidth={2.2} />
       </div>
     </div>
@@ -64,7 +64,7 @@ function Toggle({ on, delay }: { on?: boolean; delay: string }) {
     <div
       className={`prot-toggle relative rounded-full transition-colors ${
         on
-          ? "h-[58px] w-[86%] bg-[#5a58e8] shadow-[0_0_50px_4px_rgba(90,88,232,0.30)]"
+          ? "h-[58px] w-[86%] bg-brand shadow-[0_0_50px_4px_rgba(12,82,239,0.30)]"
           : "h-[42px] w-[64%] border border-black/12 bg-black/[0.03] shadow-[inset_0_2px_8px_rgba(15,15,20,0.06)]"
       }`}
       style={{ transitionDelay: delay }}

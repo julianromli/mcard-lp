@@ -229,11 +229,23 @@ export default function Footer() {
 
         {/* legal bar */}
         <div className="ft-legal mt-4 flex flex-col gap-4 border-t border-black/10 py-6 opacity-0 lg:flex-row lg:items-start lg:justify-between">
-          <p className="max-w-[640px] text-pretty text-caption text-slate-500">
-            MCard adalah platform spend management dan kartu virtual untuk bisnis di Indonesia, bagian dari
-            ekosistem Mayar. Kartu diterbitkan lewat partner berlisensi yang terdaftar dan diawasi.
-            © 2026 PT Mayar Kernel Supernova · MCard
-          </p>
+          <div className="max-w-[640px]">
+            {/* The parent mark, next to the line that already names the parent.
+                At 36px the pink tagline reads as texture, so the alt carries
+                the full name for anyone who cannot resolve it. */}
+            <img
+              src="/mayarlogo-320.png"
+              alt="Mayar SimplePay"
+              width={85}
+              height={36}
+              className="mb-4 h-9 w-auto"
+            />
+            <p className="text-pretty text-caption text-slate-500">
+              MCard adalah platform spend management dan kartu virtual untuk bisnis di Indonesia, bagian
+              dari ekosistem Mayar. Kartu diterbitkan lewat partner berlisensi yang terdaftar dan diawasi.
+              © 2026 PT Mayar Kernel Supernova · MCard
+            </p>
+          </div>
           <div className="-my-3 flex shrink-0 gap-7 text-caption text-slate-500">
             {["Ketentuan", "Privasi", "Cookies", "Keamanan"].map((l) => (
               <a key={l} href="#" className="inline-block py-3 transition-colors hover:text-slate-900">

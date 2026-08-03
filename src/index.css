@@ -113,6 +113,13 @@
   --radius-md: 0.5rem;
   --radius-lg: 0.625rem;
   --radius-xl: 0.875rem;
+
+  /* Sampled from public/mayarlogo.png. Blue carries every interactive surface;
+     pink is decoration only — at 4.15:1 on white it misses the WCAG AA 4.5:1
+     floor, so it must never hold text or sit under white text. */
+  --color-brand: #0c52ef; /* 6.05:1 on white — up from the old #5a58e8's 5.26 */
+  --color-brand-hover: #2d6bf7; /* 4.61:1 */
+  --color-accent: #ed1e79;
 }
 
 @layer base {
@@ -148,7 +155,7 @@
      keyboard black hole. This is the floor. :where() holds specificity at zero
      so a component can still opt into its own ring without !important. */
   :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
-    outline: 2px solid #5a58e8;
+    outline: 2px solid var(--color-brand);
     outline-offset: 2px;
     border-radius: var(--radius-xs);
   }

@@ -26,13 +26,19 @@ function coverRect(vw: number, vh: number) {
   return { width: w, height: h, left: (vw - w) / 2, top: (vh - h) / 2 };
 }
 
-/* zoom factor that makes the laptop screen fill the viewport (with margin),
-   whatever the cover-fit rect currently is */
+/* zoom factor that brings the laptop screen up to the viewport, whatever the
+   cover-fit rect currently is.
+
+   Contain, not cover: the screen and the viewport have different aspect
+   ratios, so covering overshot by ~6% of the width and the push-in ended on a
+   dashboard whose right column was sliced through the middle of its numbers.
+   Fitting it inside — with a margin so it reads as a screen sitting on the
+   white stage rather than a full-bleed crop — lands the whole dashboard. */
 function zoomFor(vw: number, vh: number) {
   const r = coverRect(vw, vh);
   const screenW = r.width * SCREEN.width;
   const screenH = r.height * SCREEN.height;
-  return 1.02 * Math.max(vw / screenW, vh / screenH);
+  return 0.94 * Math.min(vw / screenW, vh / screenH);
 }
 
 /* Scales the fixed dashboard canvas to fill the screen overlay,
@@ -212,7 +218,18 @@ export default function Hero() {
       tl
         // hero copy exits early
         .to(copyRef.current, { autoAlpha: 0, y: -70, duration: 0.15, ease: "power1.in" }, 0)
-        .to(discRef.current, { autoAlpha: 0, duration: 0.08 }, 0)
+        /* fromTo, not to: the pill ships with opacity-0 in the markup so the
+           intro can fade it in, and a plain .to() records its start value when
+           the scrub timeline is built — which is before the intro has run. The
+           pill then snapped to invisible on the first pixel of scroll and never
+           came back on the way up, because progress 0 rendered the recorded
+           zero. immediateRender keeps this from overwriting the intro's fade. */
+        .fromTo(
+          discRef.current,
+          { autoAlpha: 1 },
+          { autoAlpha: 0, duration: 0.08, immediateRender: false },
+          0
+        )
         // camera push toward the laptop screen — the stage carries BOTH the
         // photo and the React dashboard glued onto the screen coordinates
         .fromTo(
@@ -293,7 +310,11 @@ export default function Hero() {
               rides the same transform and can never drift away mid-scroll */}
           <div
             ref={screenRef}
-            className="absolute overflow-hidden rounded-[1px] opacity-0 shadow-[0_0_60px_rgba(80,80,200,0.15)]"
+            /* Shadow values are in photo-space and get multiplied by the ~20x
+               zoom, so they are written small on purpose: 0.6px/2px renders as
+               a ~12px/40px elevation once the screen fills the stage. The old
+               60px blur only looked right because its edges sat off-screen. */
+            className="absolute overflow-hidden rounded-[1px] opacity-0 shadow-[0_0.6px_2px_rgba(15,23,42,0.18)]"
             style={{
               left: `${SCREEN.left * 100}%`,
               top: `${SCREEN.top * 100}%`,
@@ -302,12 +323,17 @@ export default function Hero() {
             }}
           >
             <ScreenFit>
+              {/* The dashboard is decoration: it needs scripts and nothing else.
+                  Omitting allow-same-origin puts it in an opaque origin, so it
+                  cannot reach into this document, and the unlisted flags keep it
+                  from navigating the top frame, opening popups, or downloading. */}
               {mountScreen && (
                 <iframe
                   src="/mcard-dash.html"
                   title="MCard Dashboard"
                   loading="lazy"
                   scrolling="no"
+                  sandbox="allow-scripts"
                   className="block h-full w-full border-0"
                 />
               )}
@@ -333,7 +359,7 @@ export default function Hero() {
         >
           {/* The input keeps outline-none because the ring belongs on the pill
               that reads as the control, not on the bare text box inside it. */}
-          <div className="flex h-[56px] w-[min(400px,82vw)] items-center rounded-full border border-black/10 bg-white/75 pl-6 pr-1 shadow-sm backdrop-blur-md transition-colors focus-within:border-[#5a58e8]/60 focus-within:ring-2 focus-within:ring-[#5a58e8]/30">
+          <div className="flex h-[56px] w-[min(400px,82vw)] items-center rounded-full border border-black/10 bg-white/75 pl-6 pr-1 shadow-sm backdrop-blur-md transition-colors focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
             <label htmlFor="hero-email" className="sr-only">
               Alamat email kerja
             </label>
@@ -346,7 +372,7 @@ export default function Hero() {
             />
             <button
               type="submit"
-              className="h-[48px] shrink-0 whitespace-nowrap rounded-full bg-[#5a58e8] px-5 text-body-sm font-semibold text-white transition-colors hover:bg-[#6c6af4]"
+              className="h-[48px] shrink-0 whitespace-nowrap rounded-full bg-brand px-5 text-body-sm font-semibold text-white transition-colors hover:bg-brand-hover"
             >
               Daftar Gratis
             </button>
