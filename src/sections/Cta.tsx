@@ -38,7 +38,7 @@ export default function Cta() {
         >
           {/* The input keeps outline-none because the ring belongs on the pill
               that reads as the control, not on the bare text box inside it. */}
-          <div className="flex h-[56px] w-[min(400px,82vw)] items-center rounded-full border border-black/10 bg-black/[0.03] pl-6 pr-1 transition-colors focus-within:border-brand/60 focus-within:ring-2 focus-within:ring-brand/30">
+          <div className="flex h-[56px] w-[min(400px,82vw)] items-center rounded-full border border-black/10 bg-black/[0.03] pl-6 pr-1 transition-colors focus-within:border-brand focus-within:ring-2 focus-within:ring-brand">
             <label htmlFor="cta-email" className="sr-only">
               Alamat email kerja
             </label>

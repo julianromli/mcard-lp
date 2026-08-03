@@ -65,15 +65,25 @@ export function useScrollRestoration() {
     /* Writing on every scroll event would hit sessionStorage a hundred times a
        second, so the write is coalesced to one per frame. */
     let saveFrame = 0;
+    const persist = () => {
+      sessionStorage.setItem(KEY, String(Math.round(window.scrollY)));
+    };
     const save = () => {
       if (saveFrame) return;
       saveFrame = requestAnimationFrame(() => {
         saveFrame = 0;
-        sessionStorage.setItem(KEY, String(Math.round(window.scrollY)));
+        persist();
       });
     };
+    const persistOnPagehide = () => {
+      if (saveFrame) {
+        cancelAnimationFrame(saveFrame);
+        saveFrame = 0;
+      }
+      persist();
+    };
     window.addEventListener("scroll", save, { passive: true });
-    window.addEventListener("pagehide", save);
+    window.addEventListener("pagehide", persistOnPagehide);
 
     return () => {
       history.scrollRestoration = previous;
@@ -83,7 +93,7 @@ export function useScrollRestoration() {
       inputs.forEach((type) => window.removeEventListener(type, disarm));
       window.removeEventListener("load", restore);
       window.removeEventListener("scroll", save);
-      window.removeEventListener("pagehide", save);
+      window.removeEventListener("pagehide", persistOnPagehide);
     };
   }, []);
 }
