@@ -14,7 +14,12 @@ const KEY = "mcard:scroll-y";
    again on window load (the hero photo and the dashboard iframe both move the
    pin), and once more when the layout has settled. Any real input from the
    reader — wheel, touch, key, pointer — cancels the remaining attempts, so we
-   can never yank the page out from under someone who started scrolling. */
+   can never yank the page out from under someone who started scrolling.
+
+   Below 1024px the hero does not pin, so there is no spacer and the document is
+   its real height from the first paint. This still runs there: the hero AVIF
+   lands after that paint and moves everything under it, which is the same
+   problem in a much milder form. */
 export function useScrollRestoration() {
   useLayoutEffect(() => {
     if (typeof history === "undefined" || !("scrollRestoration" in history)) return;
