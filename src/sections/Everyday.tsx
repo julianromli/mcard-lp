@@ -12,27 +12,27 @@ import { FeatureMedia } from "@/components/FeatureMedia";
 const ITEMS = [
   {
     title: "Kartu baru siap dalam satu menit",
-    desc: "Beri nama, tentukan pemegang dan kategorinya, pasang limitnya. Kartunya langsung aktif untuk belanja online maupun contactless.",
+    desc: "Beri nama kartu, pilih pemegang dan kategorinya, lalu pasang limitnya. Kartu langsung aktif untuk belanja online maupun contactless.",
   },
   {
     title: "Batas pengeluaran yang kamu tentukan",
-    desc: "Setiap kartu punya limit bulanannya sendiri. Kamu tahu sisanya kapan saja — bukan pas tagihan sudah datang.",
+    desc: "Setiap kartu punya limit bulanannya sendiri. Sisa limitnya bisa kamu cek kapan saja dari dashboard.",
   },
   {
     title: "Seluruh transaksi tercatat lengkap dan rapi",
-    desc: "Lengkap dengan nama kartu, merchant, dan tanggalnya. Tidak perlu menunggu tutup buku untuk tahu uang pergi ke mana.",
+    desc: "Nama kartu, merchant, dan tanggalnya tercatat otomatis. Semua pengeluaran bisa ditelusuri dalam satu daftar.",
   },
   {
     title: "Atur seluruh anggaran sesukamu",
-    desc: "Transport, software, operasional — masing-masing punya pagunya. Statusnya berubah sebelum pengeluaran lewat batas, bukan sesudah.",
+    desc: "Transport, software, operasional, masing-masing punya pagunya sendiri. Statusnya diperbarui setiap ada pengeluaran baru.",
   },
   {
     title: "Seluruh laporan detail dan transparan",
-    desc: "Rekap bulanan, kuartalan, per tim, sampai ringkasan pajak — semuanya sudah jadi dalam PDF atau XLSX.",
+    desc: "Rekap bulanan, kuartalan, per tim, sampai ringkasan pajak. Semuanya siap diunduh dalam PDF atau XLSX.",
   },
   {
     title: "Tim support siap bantu 24 Jam",
-    desc: "Chat dari dalam aplikasi dan dijawab tim yang paham produknya, bukan balasan otomatis.",
+    desc: "Chat langsung dari dalam aplikasi dan dijawab tim yang paham produknya.",
   },
 ];
 
