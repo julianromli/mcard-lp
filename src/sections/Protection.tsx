@@ -95,10 +95,21 @@ function ControlToggles() {
 /* The suffix travels with the value so the markup can render the real figure
    up front. It used to ship a hardcoded "0K+" that only the count-up ever
    corrected, which meant anyone on reduced motion read "0K+ bisnis pakai
-   Mayar" — a wrong claim, not just a missing animation. */
+   Mayar" — a wrong claim, not just a missing animation.
+
+   Values are width-budgeted. The binding case is a 360px viewport, where the
+   two-column grid leaves each cell ~124px and display-lg is at its 38px floor —
+   roughly six extrabold characters. Desktop is looser: 204px at 1024, 278px at
+   1240. This row used to read "Real-time" here, which measures 301px against a
+   278px cell and wrapped to two lines, dropping its label 80px below the other
+   three and breaking the baseline the row is built on. Anything longer than
+   "150K+" needs measuring before it lands. */
 const STATS: { value: number | null; suffix?: string; text?: string; label: string }[] = [
   { value: 150, suffix: "K+", label: "bisnis pakai Mayar" },
-  { value: null, text: "Real-time", label: "notifikasi tiap transaksi" },
+  /* A schedule, not a quantity — so it stays value: null and sits out the
+     count-up its three neighbours run. The slash is what keeps that from
+     reading as an omission. */
+  { value: null, text: "24/7", label: "notifikasi tiap transaksi" },
   { value: 100, suffix: "%", label: "transaksi tercatat" },
   { value: 38, suffix: "%", label: "pengeluaran tak terduga berkurang" },
 ];
