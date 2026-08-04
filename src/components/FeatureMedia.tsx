@@ -3,6 +3,7 @@ import {
   ArrowDownLeft,
   Briefcase,
   Car,
+  CheckCheck,
   ChevronDown,
   Code2,
   Download,
@@ -458,31 +459,80 @@ function Reports() {
 /* ------------------------------------------------------------------ */
 function Support() {
   return (
-    <div className="flex h-full flex-col justify-center gap-[3cqw] p-[6.7cqw]">
+    <div className="flex h-full flex-col justify-center gap-[2.6cqw] p-[6.7cqw]">
       <div className="ev-fx flex items-center gap-[2.24cqw]" style={fx(0)}>
-        <div className="flex size-[8.2cqw] items-center justify-center rounded-full bg-brand">
-          <Headphones className="h-[3.36cqw] w-[3.36cqw] text-white" strokeWidth={2} />
+        <div className="relative shrink-0">
+          <div className="flex size-[8.2cqw] items-center justify-center rounded-full bg-brand">
+            <Headphones className="h-[3.36cqw] w-[3.36cqw] text-white" strokeWidth={2} />
+          </div>
+          {/* The green word below says "online"; this says it at a glance,
+              which is how every support widget carries that state. */}
+          <span className="absolute bottom-0 right-0 size-[2.8cqw] rounded-full border-[0.6cqw] border-white bg-emerald-500" />
         </div>
         <div>
           <p className="text-[2.61cqw] font-semibold text-slate-900">Support Mayar</p>
-          {/* Figma's #096 is 3.0:1 on this mesh; emerald-700 clears AA and
-              still reads as the "online" green. */}
-          <p className="text-[2.24cqw] text-emerald-700">Online · balas dalam hitungan detik</p>
+          {/* Both status lines share one grid cell so the wider of the two
+              fixes the width, and the swap to "sedang mengetik…" cannot
+              nudge the header while it plays. */}
+          <div className="grid text-[2.24cqw]">
+            {/* Figma's #096 is 3.0:1 on this mesh; emerald-700 clears AA and
+                still reads as the "online" green. */}
+            <p className="ev-chat-status col-start-1 row-start-1 text-emerald-700">
+              Online · rata-rata balas 2 menit
+            </p>
+            <p className="ev-chat-status-typing col-start-1 row-start-1 text-brand">
+              sedang mengetik…
+            </p>
+          </div>
         </div>
       </div>
 
-      <div
-        className="ev-fx ev-fx-row max-w-[82cqw] self-start text-pretty rounded-[3cqw] rounded-bl-[1.1cqw] border border-black/[0.07] bg-white px-[3cqw] py-[2.24cqw] text-[2.43cqw] text-slate-700 shadow-[0_1px_1.5px_rgba(0,0,0,0.1)]"
-        style={fx(0)}
-      >
-        Bagaimana cara menaikkan limit transfer harian?
+      {/* The customer speaks first and speaks from the right: the filled
+          bubble is always the reader's own voice, and the tail corner has to
+          agree with it. This pair used to run the other way round, which read
+          as the brand asking the question and the customer answering it. */}
+      <div className="flex flex-col items-end gap-[1cqw]">
+        <div className="ev-chat-sent max-w-[76cqw] text-pretty rounded-[3cqw] rounded-br-[1.1cqw] bg-brand px-[3cqw] py-[2.24cqw] text-[2.43cqw] text-white">
+          Kartu tim saya ditolak waktu bayar software tadi pagi. Bisa dibantu cek?
+        </div>
+        <p className="ev-chat-receipt flex items-center gap-[0.9cqw] pr-[1.5cqw] text-[2.05cqw] tabular-nums text-slate-500">
+          09.41
+          <CheckCheck className="ev-chat-check size-[2.4cqw]" strokeWidth={2.5} />
+        </p>
       </div>
 
-      <div
-        className="ev-fx ev-fx-row max-w-[70cqw] self-end text-pretty rounded-[3cqw] rounded-br-[1.1cqw] bg-brand px-[3cqw] py-[2.24cqw] text-[2.43cqw] text-white"
-        style={fx(1)}
-      >
-        Limit harian bisa diubah di Pengaturan · Limit. Mau saya bantu ajukan sekarang?
+      {/* The dots and the reply they become share one grid cell, so the
+          frame keeps its height for the whole sequence. This column is
+          vertically centred: a bubble that grew into place would recentre
+          the entire card underneath the animation. */}
+      <div className="flex flex-col gap-[1cqw]">
+        <div className="flex items-end gap-[1.7cqw]">
+          <div className="ev-chat-agent flex size-[5.4cqw] shrink-0 items-center justify-center rounded-full bg-brand">
+            <Headphones className="h-[2.6cqw] w-[2.6cqw] text-white" strokeWidth={2} />
+          </div>
+          <div className="grid min-w-0">
+            <div className="ev-chat-typing col-start-1 row-start-1 flex items-center gap-[1.1cqw] self-end justify-self-start rounded-[3cqw] rounded-bl-[1.1cqw] border border-black/[0.07] bg-white px-[2.8cqw] py-[2.4cqw] shadow-[0_1px_1.5px_rgba(0,0,0,0.1)]">
+              {[0, 1, 2].map((d) => (
+                <span
+                  key={d}
+                  className="ev-chat-dot size-[1.5cqw] rounded-full bg-slate-400"
+                  style={fx(d)}
+                />
+              ))}
+            </div>
+            {/* justify-self, or the grid's default stretch would blow the
+                bubble out to the full column instead of letting it hug the
+                text the way the other one does. */}
+            <div className="ev-chat-msg col-start-1 row-start-1 max-w-[70cqw] justify-self-start text-pretty rounded-[3cqw] rounded-bl-[1.1cqw] border border-black/[0.07] bg-white px-[3cqw] py-[2.24cqw] text-[2.43cqw] text-slate-700 shadow-[0_1px_1.5px_rgba(0,0,0,0.1)]">
+              Sudah saya cek, limit bulanan kartunya habis. Saya naikkan sekarang ya, kartunya langsung bisa dipakai lagi.
+            </div>
+          </div>
+        </div>
+        {/* Indented past the avatar and its gap so it hangs under the
+            bubble, not under the agent. */}
+        <p className="ev-chat-stamp pl-[8.6cqw] text-[2.05cqw] tabular-nums text-slate-500">
+          09.42
+        </p>
       </div>
     </div>
   );

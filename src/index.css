@@ -280,6 +280,181 @@
   transform: none;
 }
 
+/* ------------------------------------------------------------------ */
+/*  Support card: the conversation plays, it does not just appear.     */
+/*                                                                     */
+/*  The other five cards are diagrams, so a stagger is honest motion   */
+/*  for them. This one is two people talking, and a chat that arrives  */
+/*  fully written reads as a screenshot. So it runs in the order it    */
+/*  would really happen: the customer's message goes out, it gets      */
+/*  read, an agent starts typing, and the reply lands.                 */
+/*                                                                     */
+/*  The whole sequence is 2.2s of transform and opacity only. It is    */
+/*  scoped to [data-reveal="in"], so nothing animates until the card   */
+/*  is actually the one on screen, and it replays each time it is.     */
+/*                                                                     */
+/*    140ms  message sent          650ms  agent picks up, dots start   */
+/*    520ms  delivered/read       1750ms  reply lands                  */
+/*                               1900ms  dots gone                     */
+/*                               1980ms  reply timestamp               */
+/* ------------------------------------------------------------------ */
+
+/* The sent bubble grows out of its own tail rather than the middle: the
+   tail is where a speech bubble is anchored, so that is the corner the
+   send should push from. Same reasoning mirrored on the reply below. */
+.ev-chat-sent {
+  opacity: 0;
+  transform: translateY(1.6cqw) scale(0.96);
+  transform-origin: 100% 100%;
+}
+[data-reveal="in"] .ev-chat-sent {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 240ms ease-out 140ms,
+    transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1) 140ms;
+}
+
+.ev-chat-receipt {
+  opacity: 0;
+}
+[data-reveal="in"] .ev-chat-receipt {
+  opacity: 1;
+  transition: opacity 260ms ease-out 520ms;
+}
+
+/* Grey ticks mean delivered, brand ticks mean read. Turning them at the
+   moment the agent starts typing is what actually says someone opened
+   the report, and it costs one colour on one 13px icon. */
+.ev-chat-check {
+  color: var(--color-slate-400);
+}
+[data-reveal="in"] .ev-chat-check {
+  color: var(--color-brand);
+  transition: color 300ms ease-out 620ms;
+}
+
+.ev-chat-agent {
+  opacity: 0;
+  transform: scale(0.8);
+}
+[data-reveal="in"] .ev-chat-agent {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 240ms ease-out 620ms,
+    transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1) 620ms;
+}
+
+/* A two-stage life (in, hold, out) is a keyframe job, not a transition:
+   the dots have to leave again on their own, without a state change to
+   drive them. */
+.ev-chat-typing {
+  opacity: 0;
+}
+[data-reveal="in"] .ev-chat-typing {
+  animation: ev-chat-typing-life 1250ms 650ms both;
+}
+@keyframes ev-chat-typing-life {
+  0% {
+    opacity: 0;
+    transform: translateY(1.4cqw) scale(0.92);
+    animation-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  15% {
+    opacity: 1;
+    transform: none;
+    animation-timing-function: linear;
+  }
+  84% {
+    opacity: 1;
+    transform: none;
+    animation-timing-function: cubic-bezier(0.4, 0, 1, 1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+/* Two iterations, not infinite: the bubble holding these is gone by
+   1900ms, and three dots pulsing forever behind opacity 0 is real
+   compositor work for something nobody can see. */
+[data-reveal="in"] .ev-chat-dot {
+  animation: ev-chat-dot 1050ms ease-in-out calc(650ms + var(--i, 0) * 150ms) 2
+    both;
+}
+@keyframes ev-chat-dot {
+  0%,
+  58%,
+  100% {
+    opacity: 0.32;
+    transform: scale(0.72);
+  }
+  26% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* The header line swaps to "sedang mengetik…" for exactly as long as the
+   dots are up, which is where a real chat puts that state. Both lines
+   share a grid cell, so the wider one fixes the width and the swap cannot
+   nudge the layout. */
+[data-reveal="in"] .ev-chat-status {
+  animation: ev-chat-status-off 1250ms linear 650ms both;
+}
+@keyframes ev-chat-status-off {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  12%,
+  88% {
+    opacity: 0;
+  }
+}
+
+.ev-chat-status-typing {
+  opacity: 0;
+}
+[data-reveal="in"] .ev-chat-status-typing {
+  animation: ev-chat-status-on 1250ms linear 650ms both;
+}
+@keyframes ev-chat-status-on {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  12%,
+  88% {
+    opacity: 1;
+  }
+}
+
+/* Lands 150ms before the dots finish dissolving, so the bubble reads as
+   the thing they turned into rather than the thing that replaced them. */
+.ev-chat-msg {
+  opacity: 0;
+  transform: translateY(1.3cqw) scale(0.94);
+  transform-origin: 0 100%;
+}
+[data-reveal="in"] .ev-chat-msg {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 260ms ease-out 1750ms,
+    transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1) 1750ms;
+}
+
+.ev-chat-stamp {
+  opacity: 0;
+}
+[data-reveal="in"] .ev-chat-stamp {
+  opacity: 1;
+  transition: opacity 260ms ease-out 1980ms;
+}
+
 /* Required, not defensive: the global reduce block above only shortens
    transitions. Without a final state these elements would sit at opacity 0
    forever for any reader whose card never flips to "in". */
@@ -288,5 +463,32 @@
   .ev-meter > * {
     opacity: 1;
     transform: none;
+  }
+
+  /* The global block shortens durations but leaves delays alone, so the
+     chat would still sit blank for 1.75s and then snap. Give every beat
+     its finished state instead: with no value left to change, none of the
+     transitions above have anything to run. */
+  .ev-chat-sent,
+  .ev-chat-receipt,
+  .ev-chat-agent,
+  .ev-chat-msg,
+  .ev-chat-stamp {
+    opacity: 1;
+    transform: none;
+  }
+  .ev-chat-check {
+    color: var(--color-brand);
+  }
+  .ev-chat-status {
+    animation: none;
+    opacity: 1;
+  }
+
+  /* A looping indicator and a timed swap are the two things this reader
+     asked not to have, and the reply they stand in for is already up. */
+  .ev-chat-typing,
+  .ev-chat-status-typing {
+    display: none;
   }
 }
