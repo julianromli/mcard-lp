@@ -34,6 +34,8 @@ The dev server runs on [http://localhost:3000](http://localhost:3000).
 public/
   mcard-hero.avif     Hero photograph (3840×2000, AVIF)
   brands/*.avif       Integration card photography (672×448, one per brand)
+  brands/logos/*.svg  Brand marks, extracted from @thesvg/react — see
+                      tools/brand-logos/extract.mjs to regenerate
   mcard-dash.html     Self-contained dashboard shown inside the laptop screen
 src/
   main.tsx            Entry point — renders <Home /> directly

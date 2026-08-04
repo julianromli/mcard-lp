@@ -10,42 +10,40 @@ import { ArrowRight } from "lucide-react";
    are nobody's to put on this page, and a screenshot of someone else's UI ages
    the moment they ship a redesign. Stock imagery under the Unsplash licence,
    self-hosted; see tools note in README. */
-type Brand = { name: string; cat: string; badge: string; hue: string; mono: string; img: string };
+/* `logo` is the brand's own mark, extracted from @thesvg/react into a standalone
+   file rather than imported as a component — see tools/brand-logos/extract.mjs
+   for why, and for how the per-brand variant was chosen. The library is not a
+   runtime dependency. */
+type Brand = {
+  name: string;
+  cat: string;
+  badge: string;
+  hue: string;
+  img: string;
+  logo: string;
+};
 
 const ROW_A: Brand[] = [
-  { name: "Stripe", cat: "Pembayaran", badge: "Payout instan", hue: "#635bff", mono: "S", img: "/brands/stripe.avif" },
-  { name: "Shopify", cat: "Belanja", badge: "Sinkron otomatis", hue: "#95bf47", mono: "S", img: "/brands/shopify.avif" },
-  { name: "Gusto", cat: "Payroll", badge: "Sekali klik", hue: "#f45d48", mono: "G", img: "/brands/gusto.avif" },
-  { name: "QuickBooks", cat: "Akuntansi", badge: "Rekonsiliasi otomatis", hue: "#2ca01c", mono: "Q", img: "/brands/quickbooks.avif" },
-  { name: "Slack", cat: "Notifikasi", badge: "Real-time", hue: "#e01e5a", mono: "S", img: "/brands/slack.avif" },
-  { name: "Linear", cat: "Tiket", badge: "Sinkron dua arah", hue: "#5e6ad2", mono: "L", img: "/brands/linear.avif" },
-  { name: "Vercel", cat: "Deploy", badge: "Sinkron instan", hue: "#9c9cff", mono: "V", img: "/brands/vercel.avif" },
+  { name: "Stripe", cat: "Pembayaran", badge: "Payout instan", hue: "#635bff", img: "/brands/stripe.avif", logo: "/brands/logos/stripe.svg" },
+  { name: "Shopify", cat: "Belanja", badge: "Sinkron otomatis", hue: "#95bf47", img: "/brands/shopify.avif", logo: "/brands/logos/shopify.svg" },
+  { name: "Gusto", cat: "Payroll", badge: "Sekali klik", hue: "#f45d48", img: "/brands/gusto.avif", logo: "/brands/logos/gusto.svg" },
+  { name: "QuickBooks", cat: "Akuntansi", badge: "Rekonsiliasi otomatis", hue: "#2ca01c", img: "/brands/quickbooks.avif", logo: "/brands/logos/quickbooks.svg" },
+  { name: "Slack", cat: "Notifikasi", badge: "Real-time", hue: "#e01e5a", img: "/brands/slack.avif", logo: "/brands/logos/slack.svg" },
+  { name: "Linear", cat: "Tiket", badge: "Sinkron dua arah", hue: "#5e6ad2", img: "/brands/linear.avif", logo: "/brands/logos/linear.svg" },
+  { name: "Vercel", cat: "Deploy", badge: "Sinkron instan", hue: "#9c9cff", img: "/brands/vercel.avif", logo: "/brands/logos/vercel.svg" },
 ];
 
 const ROW_B: Brand[] = [
-  { name: "Notion", cat: "Dokumen", badge: "Ekspor otomatis", hue: "#cfcfd6", mono: "N", img: "/brands/notion.avif" },
-  { name: "Figma", cat: "Desain", badge: "Tagihan mulus", hue: "#a259ff", mono: "F", img: "/brands/figma.avif" },
-  { name: "AWS", cat: "Cloud", badge: "Bayar tagihan", hue: "#ff9900", mono: "A", img: "/brands/aws.avif" },
-  { name: "Plaid", cat: "Koneksi", badge: "Koneksi aman", hue: "#12b5a5", mono: "P", img: "/brands/plaid.avif" },
+  { name: "Notion", cat: "Dokumen", badge: "Ekspor otomatis", hue: "#cfcfd6", img: "/brands/notion.avif", logo: "/brands/logos/notion.svg" },
+  { name: "Figma", cat: "Desain", badge: "Tagihan mulus", hue: "#a259ff", img: "/brands/figma.avif", logo: "/brands/logos/figma.svg" },
+  { name: "AWS", cat: "Cloud", badge: "Bayar tagihan", hue: "#ff9900", img: "/brands/aws.avif", logo: "/brands/logos/aws.svg" },
+  { name: "Plaid", cat: "Koneksi", badge: "Koneksi aman", hue: "#12b5a5", img: "/brands/plaid.avif", logo: "/brands/logos/plaid.svg" },
   /* Xero and QuickBooks share a category and are on screen together, so they
      must not share a subject or the row reads as a rendering bug. */
-  { name: "Xero", cat: "Akuntansi", badge: "Rekonsiliasi otomatis", hue: "#13b5ea", mono: "X", img: "/brands/xero.avif" },
-  { name: "Wise", cat: "Valas", badge: "Kurs tengah", hue: "#9fe870", mono: "W", img: "/brands/wise.avif" },
-  { name: "GitHub", cat: "Kode", badge: "Sinkron instan", hue: "#8b949e", mono: "G", img: "/brands/github.avif" },
+  { name: "Xero", cat: "Akuntansi", badge: "Rekonsiliasi otomatis", hue: "#13b5ea", img: "/brands/xero.avif", logo: "/brands/logos/xero.svg" },
+  { name: "Wise", cat: "Valas", badge: "Kurs tengah", hue: "#9fe870", img: "/brands/wise.avif", logo: "/brands/logos/wise.svg" },
+  { name: "GitHub", cat: "Kode", badge: "Sinkron instan", hue: "#8b949e", img: "/brands/github.avif", logo: "/brands/logos/github.svg" },
 ];
-
-/* The monogram chip is filled with the brand's own hue, which runs from
-   #cfcfd6 to #2ca01c. A single hardcoded ink colour cannot clear 4.5:1 across
-   that range, so each chip picks the end of the scale that does. */
-function inkOn(hex: string) {
-  const c = hex.replace("#", "");
-  const chan = [0, 2, 4].map((i) => parseInt(c.slice(i, i + 2), 16) / 255);
-  const lin = (v: number) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
-  const L = 0.2126 * lin(chan[0]) + 0.7152 * lin(chan[1]) + 0.0722 * lin(chan[2]);
-  const onDark = (L + 0.05) / 0.05;
-  const onWhite = 1.05 / (L + 0.05);
-  return onDark >= onWhite ? "#0d0d13" : "#ffffff";
-}
 
 /* Sibling to inkOn, solving the same problem one layer up. The badge used to be
    a 17%-alpha wash of the brand hue, which was legible only because the surface
@@ -125,12 +123,16 @@ function BrandCard({ b, armed }: { b: Brand; armed: boolean }) {
           line measured 3.8:1. Dropping the translucency also takes twenty-eight
           backdrop-filters out of a layer that never stops moving. */}
       <div className="absolute inset-x-3 bottom-3 flex items-center gap-3 rounded-2xl border border-black/[0.07] bg-white px-4 py-3 shadow-[0_2px_8px_rgba(15,23,42,0.14)] transition-transform duration-500 group-hover:-translate-y-1">
+        {/* A white tile rather than the hue-filled circle the monogram sat in:
+            a logo brings its own colours and needs a neutral ground. object-
+            contain, so the two wordmarks letterbox instead of distorting. The
+            colours are baked into each file — an SVG behind <img> is an
+            isolated document that no stylesheet reaches. */}
         <span
           aria-hidden
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-body font-bold"
-          style={{ background: b.hue, color: inkOn(b.hue) }}
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-black/[0.06] bg-white p-[5px] shadow-[0_1px_2px_rgba(15,23,42,0.06)]"
         >
-          {b.mono}
+          <img src={b.logo} alt="" width={24} height={24} className="h-full w-full object-contain" />
         </span>
         <div className="min-w-0">
           <p className="truncate text-body-sm font-semibold text-slate-900" title={b.name}>{b.name}</p>
