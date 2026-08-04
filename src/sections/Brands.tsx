@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap, ScrollTrigger, MOTION_OK } from "@/lib/motion";
-import { ArrowRight, Pause, Play } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 /* ------------------------------------------------------------------ */
 /*  Data — adapted to Mercury's integration ecosystem                  */
@@ -188,7 +188,6 @@ function MarqueeRow({
 /* ------------------------------------------------------------------ */
 export function Brands() {
   const root = useRef<HTMLElement>(null);
-  const [paused, setPaused] = useState(false);
   const [inView, setInView] = useState(true);
 
   useLayoutEffect(() => {
@@ -250,7 +249,10 @@ export function Brands() {
     return () => st.kill();
   }, []);
 
-  const running = !paused && inView;
+  /* Off-screen is the only thing that stops the rows outright now. Holding a
+     card still to read it is left to hover and to focus-within, both of which
+     MarqueeRow handles in CSS. */
+  const running = inView;
 
   return (
     <section ref={root} id="integrasi" className="relative overflow-hidden bg-[#fafafc] py-[13vh]">
@@ -269,17 +271,6 @@ export function Brands() {
             Lihat semua integrasi
             <ArrowRight size={15} className="transition-transform duration-300 group-hover:translate-x-0.5" />
           </a>
-          {/* Hover was the only way to stop the rows, which left keyboard and
-              touch with no way to hold a card still long enough to read it. */}
-          <button
-            type="button"
-            onClick={() => setPaused((v) => !v)}
-            aria-pressed={paused}
-            className="inline-flex h-11 items-center gap-2 whitespace-nowrap rounded-full border border-black/15 px-5 text-body-sm font-semibold text-slate-700 transition-colors hover:bg-black/5"
-          >
-            {paused ? <Play size={14} aria-hidden /> : <Pause size={14} aria-hidden />}
-            {paused ? "Jalankan" : "Hentikan"} animasi
-          </button>
         </div>
       </div>
 
