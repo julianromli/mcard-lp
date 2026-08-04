@@ -1,4 +1,5 @@
 import { Wifi } from "lucide-react";
+import { DESIGNS, type CardDesign } from "@/lib/card-designs";
 
 /* ------------------------------------------------------------------ */
 /*  Virtual card — ported from the MCard dashboard prototype           */
@@ -9,16 +10,9 @@ import { Wifi } from "lucide-react";
 /* The dashboard draws the card at a fixed 420×264. Everything here is
    expressed in cqw against that width so one component fits both the
    sticky desktop column and the smaller mobile slot. */
-const DESIGNS = {
-  midnight: "linear-gradient(140deg,#1f2235 0%,#0E0F1A 55%,#15162a 100%)",
-  royal: "linear-gradient(140deg,#3A4BF0 0%,#1E2DB0 60%,#16208a 100%)",
-  magenta: "linear-gradient(140deg,#F0568F 0%,#C9156A 58%,#9E1457 100%)",
-  graphite: "linear-gradient(140deg,#4A4F63 0%,#2A2D3C 60%,#1D1F2B 100%)",
-} as const;
-
 /* The Mayar mark, reused at two sizes: the wordless logo top-left and the
    oversized watermark bleeding off the bottom-right corner. */
-function MayarMark({ fill, accent }: { fill: string; accent: string }) {
+export function MayarMark({ fill, accent }: { fill: string; accent: string }) {
   return (
     <svg viewBox="0 0 133.95 108" className="h-auto w-full" aria-hidden="true">
       <path
@@ -40,7 +34,7 @@ export function VirtualCard({
   holder?: string;
   last4?: string;
   exp?: string;
-  design?: keyof typeof DESIGNS;
+  design?: CardDesign;
   className?: string;
 }) {
   return (

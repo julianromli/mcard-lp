@@ -231,3 +231,62 @@
     );
   }
 }
+
+/* The Everyday feature graphics assemble themselves when their item becomes
+   active, rather than arriving whole. The trigger is an attribute flip on the
+   card root — `data-reveal="in"` — set from React on desktop and by a
+   ScrollTrigger on the mobile column, so one rule set drives both.
+
+   --i is the stagger index, set inline per element. Only opacity and transform
+   animate; a card carries up to ~20 of these and anything that touches layout
+   would land them all in the same frame as the crossfade. */
+.ev-fx {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 500ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i, 0) * 60ms),
+    transform 500ms cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i, 0) * 60ms);
+}
+
+/* Rows travel less than the panel that holds them and start after it, so the
+   panel reads as the container filling rather than everything sliding at once. */
+.ev-fx-row {
+  transform: translateY(10px);
+  transition-duration: 420ms;
+  transition-delay: calc(var(--i, 0) * 45ms + 120ms);
+}
+
+/* Status pills and toggles pop instead of rising — they are confirmations, and
+   arriving last is what makes them read that way. */
+.ev-fx-pop {
+  transform: scale(0.9);
+  transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition-duration: 360ms;
+  transition-delay: calc(var(--i, 0) * 45ms + 380ms);
+}
+
+/* The fill is masked by a percentage-width wrapper and wipes in from the left.
+   scaleX would have been one element fewer, but it stretches the pill's right
+   cap into an ellipse for the whole 800ms. */
+.ev-meter > * {
+  transform: translateX(-101%);
+  transition: transform 800ms cubic-bezier(0.22, 1, 0.36, 1)
+    calc(var(--i, 0) * 60ms + 240ms);
+}
+
+[data-reveal="in"] .ev-fx,
+[data-reveal="in"] .ev-meter > * {
+  opacity: 1;
+  transform: none;
+}
+
+/* Required, not defensive: the global reduce block above only shortens
+   transitions. Without a final state these elements would sit at opacity 0
+   forever for any reader whose card never flips to "in". */
+@media (prefers-reduced-motion: reduce) {
+  .ev-fx,
+  .ev-meter > * {
+    opacity: 1;
+    transform: none;
+  }
+}
