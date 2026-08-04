@@ -521,7 +521,7 @@ export default function Protection() {
         {/* h2, not h3: dropping the old section headline left this as the
             section's own heading, so it can't sit a level below nothing. */}
         <h2 className="prot-subhead mt-[7vh] max-w-[560px] text-balance text-title font-bold text-slate-900 opacity-0">
-          Perlindungan yang tidak berhenti di standar minimum.
+          Perlindungan yang bikin kamu nyaman dan aman.
         </h2>
 
         <div className="prot-cards mt-10 grid gap-6 md:grid-cols-3">

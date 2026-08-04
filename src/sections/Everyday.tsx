@@ -19,19 +19,19 @@ const ITEMS = [
     desc: "Setiap kartu punya limit bulanannya sendiri. Kamu tahu sisanya kapan saja — bukan pas tagihan sudah datang.",
   },
   {
-    title: "Transaksi muncul begitu kartu dipakai",
+    title: "Seluruh transaksi tercatat lengkap dan rapi",
     desc: "Lengkap dengan nama kartu, merchant, dan tanggalnya. Tidak perlu menunggu tutup buku untuk tahu uang pergi ke mana.",
   },
   {
-    title: "Anggaran yang memantau dirinya sendiri",
+    title: "Atur seluruh anggaran sesukamu",
     desc: "Transport, software, operasional — masing-masing punya pagunya. Statusnya berubah sebelum pengeluaran lewat batas, bukan sesudah.",
   },
   {
-    title: "Laporan siap unduh, bukan siap disusun",
+    title: "Seluruh laporan detail dan transparan",
     desc: "Rekap bulanan, kuartalan, per tim, sampai ringkasan pajak — semuanya sudah jadi dalam PDF atau XLSX.",
   },
   {
-    title: "Ada yang bantu, kapan pun",
+    title: "Tim support siap bantu 24 Jam",
     desc: "Chat dari dalam aplikasi dan dijawab tim yang paham produknya, bukan balasan otomatis.",
   },
 ];
@@ -109,10 +109,10 @@ export function Everyday() {
       {/* header */}
       <div className="ev-head mx-auto max-w-[820px] px-6 text-center">
         <h2 className="ev-reveal text-balance text-display-lg font-extrabold text-slate-900">
-          Satu dashboard, semua urusan uang bisnis
+          Satu dashboard untuk seluruh urusan keuangan
         </h2>
         <p className="ev-reveal mx-auto mt-5 max-w-[560px] text-pretty text-body-lg text-slate-500">
-          Terbitkan kartu, pasang batas pengeluaran, dan tarik laporannya — semua tanpa pindah aplikasi.
+          Buat kartu, pasang limit pengeluaran, dapatkan report lengkap. Semua dalam satu aplikasi.
         </p>
       </div>
 

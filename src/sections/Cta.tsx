@@ -27,7 +27,7 @@ export default function Cta() {
     <section ref={root} className="relative border-t border-black/[0.07] bg-white px-6 pb-[12vh] pt-[15vh]">
       <div className="mx-auto flex max-w-[760px] flex-col items-center text-center">
         <h2 className="cta-reveal text-balance text-display font-extrabold text-slate-900">
-          Kendalikan pengeluaran bisnismu hari ini
+          Kontrol pengeluaran bisnismu hari ini
         </h2>
         <p className="cta-reveal mt-4 max-w-[480px] text-pretty text-body text-slate-500">
           Gabung dengan 150.000+ bisnis yang sudah pakai Mayar. Tanpa kartu kredit, tanpa kontrak.
