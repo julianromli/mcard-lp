@@ -20,12 +20,20 @@ export default function Hero() {
 
   /* The dashboard is a 564KB self-contained document for a surface nobody sees
      until the push-in is a fifth of the way through — and one that never runs
-     under reduced motion. It stays unmounted until the scrub approaches it. */
+     under reduced motion. It stays unmounted until then. */
   const [mountScreen, setMountScreen] = useState(false);
   const mountedRef = useRef(false);
 
   useLayoutEffect(() => {
     const mm = gsap.matchMedia(root);
+
+    /* Both the idle scheduler and the scrub want to be the one that mounts the
+       dashboard, and whichever gets there first is the right answer. */
+    const mountScreenOnce = () => {
+      if (mountedRef.current) return;
+      mountedRef.current = true;
+      setMountScreen(true);
+    };
 
     /* The screen overlay ships with opacity-0 in the markup, and only the
        desktop scrub below ever reveals it. opacity alone still leaves the
@@ -53,6 +61,27 @@ export default function Hero() {
           0.3
         )
         .fromTo(discRef.current, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.7 }, 1.0);
+
+      /* Mount the dashboard on the first idle rather than on the scrub reaching
+         it. The document unpacks itself — base64 to blobs, 38 @font-face, then
+         an icon pass that swaps every <i> for an <svg> — and doing all of that
+         at progress 0.08 meant the reflow landed inside the crossfade that is
+         busy fading the thing in. Idle mounting moves it into the seconds the
+         reader spends on the headline. The scrub's own trigger below stays as
+         the fallback for a reader who scrolls before idle ever arrives.
+
+         Cheap for this document either way: with allow-scripts and no
+         allow-same-origin the frame is opaque-origin, so the unpack runs in its
+         own process, and the hero photo holds fetchPriority high above it.
+
+         requestIdleCallback only reached Safari in 16.4, and the fallback is a
+         plain delay rather than an immediate mount: the point is to stay out of
+         the intro's way, not merely to be asynchronous. */
+      const idle = typeof window.requestIdleCallback === "function";
+      const id = idle
+        ? window.requestIdleCallback(mountScreenOnce, { timeout: 3000 })
+        : window.setTimeout(mountScreenOnce, 1200);
+      return () => (idle ? window.cancelIdleCallback(id) : window.clearTimeout(id));
     });
 
     /* ---------- scroll-driven cinematic push-in ----------
@@ -92,18 +121,27 @@ export default function Hero() {
           pin: true,
           anticipatePin: 1,
           invalidateOnRefresh: true,
-          /* Both layers are promoted for the length of the scrub and no
-             longer: the stage holds a 3840px photo blown up ~20x, which is a
-             texture worth releasing the moment the section is behind us. */
+          /* The stage is promoted for the length of the scrub and no longer:
+             it holds a 3840px photo blown up ~20x, which is a texture worth
+             releasing the moment the section is behind us.
+
+             Only the stage. The screen overlay used to be promoted alongside
+             it, which was both pointless and harmful: the overlay has no
+             transform of its own — the camera move lives entirely on the stage
+             — so the hint reserved nothing, it just split the overlay into its
+             own layer that the stage's scale then bitmap-upscaled. That is the
+             blur a 0.5px width nudge on scroll-settle used to chase away, and
+             the nudge is what made the dashboard shiver: half a pixel of
+             layout, multiplied by a 16-29x camera. Unpromoted, the overlay
+             rasters with the stage at whatever scale the frame is actually at,
+             and there is nothing left to correct. */
           onToggle: (self) => {
-            const v = self.isActive ? "transform" : "auto";
-            if (stageRef.current) stageRef.current.style.willChange = v;
-            if (screenRef.current) screenRef.current.style.willChange = v;
+            if (stageRef.current) {
+              stageRef.current.style.willChange = self.isActive ? "transform" : "auto";
+            }
           },
           onUpdate: (self) => {
-            if (mountedRef.current || self.progress < 0.08) return;
-            mountedRef.current = true;
-            setMountScreen(true);
+            if (self.progress >= 0.08) mountScreenOnce();
           },
         },
       });
@@ -160,6 +198,14 @@ export default function Hero() {
           { autoAlpha: 1, filter: "blur(0px)", duration: t.dashDur, ease: "none" },
           t.dash
         )
+        /* blur(0px) is not the same as no blur: a filter of any value keeps the
+           element on the filter render path, so every frame of the pull-back
+           after the handoff was still round-tripping the dashboard through a
+           blur that does nothing. Dropping it the moment the lens has finished
+           focusing hands the rest of the move back to a plain layer. It is a
+           timeline .set rather than an onComplete because the scrub runs
+           backwards too, and GSAP restores the recorded value on the way up. */
+        .set(screenRef.current, { filter: "none" }, t.dash + t.dashDur)
         // white stage settles before the crossfade starts — it is the floor the
         // photo dissolves onto, never a layer on top of it
         .fromTo(

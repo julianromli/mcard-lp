@@ -9,9 +9,17 @@ function ScreenFit({ children }: { children: React.ReactNode }) {
   useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const update = () => setS(el.clientWidth / DW);
-    update();
-    const ro = new ResizeObserver(update);
+    setS(el.clientWidth / DW);
+    /* contentBoxSize, not clientWidth: the overlay is sized as a percentage of
+       the stage, so its layout width is fractional and clientWidth rounds it to
+       a whole pixel. On a ~66px overlay that rounding is a 1.5% error in the
+       scale, and 1.5% of a dashboard the camera has magnified 16-29x is a jump
+       you can see whenever the rounding flips. ResizeObserver reports the
+       untransformed box in fractions; getBoundingClientRect would not, because
+       it comes back already multiplied by the camera's zoom. */
+    const ro = new ResizeObserver(([entry]) => {
+      setS((entry.contentBoxSize?.[0]?.inlineSize ?? el.clientWidth) / DW);
+    });
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
@@ -22,35 +30,6 @@ function ScreenFit({ children }: { children: React.ReactNode }) {
       </div>
     </div>
   );
-}
-
-/* Chromium bitmap-upscales transformed layers while they move and only
-   re-rasters them sharply when their geometry changes, so once scrolling
-   settles we nudge the overlay size by half a pixel to force a crisp
-   re-raster at the current zoom level */
-function useCrispRaster(screenRef: RefObject<HTMLDivElement | null>) {
-  useLayoutEffect(() => {
-    const el = screenRef.current;
-    if (!el) return;
-    let t: ReturnType<typeof setTimeout>;
-    const bump = () => {
-      el.style.width = `calc(${SCREEN.width * 100}% + 0.5px)`;
-      requestAnimationFrame(() => {
-        setTimeout(() => {
-          el.style.width = `${SCREEN.width * 100}%`;
-        }, 60);
-      });
-    };
-    const onScroll = () => {
-      clearTimeout(t);
-      t = setTimeout(bump, 300);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      clearTimeout(t);
-    };
-  }, [screenRef]);
 }
 
 type Props = {
@@ -65,8 +44,6 @@ type Props = {
    fractions of the image, so whatever transform the scrub puts on this element
    moves them together and the dashboard can never slide off the laptop. */
 export default function HeroStage({ rect, mountScreen, stageRef, imgRef, screenRef }: Props) {
-  useCrispRaster(screenRef);
-
   return (
     <div
       ref={stageRef}
@@ -110,15 +87,32 @@ export default function HeroStage({ rect, mountScreen, stageRef, imgRef, screenR
           {/* The dashboard is decoration: it needs scripts and nothing else.
               Omitting allow-same-origin puts it in an opaque origin, so it
               cannot reach into this document, and the unlisted flags keep it
-              from navigating the top frame, opening popups, or downloading. */}
+              from navigating the top frame, opening popups, or downloading.
+
+              pointer-events-none because decoration is all it is. The document
+              inside carries a 3D tilt card that rewrites its transform and
+              repaints a radial-gradient glare on every mousemove — harmless at
+              its own size, but here it is a 1600x904 surface blown up 16-29x,
+              so a mouse crossing the hero was repainting the largest layer on
+              the page. It also stops the card's cursor:grab from claiming the
+              photograph.
+
+              No loading="lazy": the mount below is already deferred to idle on
+              purpose, and a second deferral inside the browser only pushes the
+              564KB unpack closer to the crossfade that has to look at it.
+
+              The bundle itself carries one edit worth knowing about if it is
+              ever regenerated: its sticky header shipped with a
+              backdrop-filter:blur(12px), which the camera's zoom turns into a
+              per-frame backdrop readback of the largest surface on the page.
+              It is an opaque background now. */}
           {mountScreen && (
             <iframe
               src="/mcard-dash.html"
               title="MCard Dashboard"
-              loading="lazy"
               scrolling="no"
               sandbox="allow-scripts"
-              className="block h-full w-full border-0"
+              className="pointer-events-none block h-full w-full border-0"
             />
           )}
         </ScreenFit>
