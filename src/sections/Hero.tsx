@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState } from "react";
-import { gsap, ScrollTrigger, MOTION_OK, MOTION_OK_DESKTOP, MOTION_REDUCED } from "@/lib/motion";
+import { gsap, ScrollTrigger, MOTION_OK, MOTION_REDUCED, NARROW_MAX } from "@/lib/motion";
 
 const DW = 1600;
 const DH = 904;
@@ -10,14 +10,40 @@ const IMG_H = 2000;
 
 /* laptop screen rect as fractions of the image (measured, not guessed) */
 const SCREEN = {
-  left: 0.47760,
-  top: 0.69850,
+  left: 0.47775,
+  top: 0.69900,
   width: 0.04010,
   height: 0.04350,
 };
-/* screen center = zoom focal point */
-const FOCAL_X = 0.49766;
-const FOCAL_Y = 0.72025;
+const dashPoint = (x: number, y: number) => ({
+  x: SCREEN.left + (x / DW) * SCREEN.width,
+  y: SCREEN.top + (y / DH) * SCREEN.height,
+});
+
+/* The camera aims at the middle of the laptop screen at every width. */
+const FOCAL = dashPoint(DW / 2, DH / 2);
+
+/* How far past a full-height fit the narrow push travels before it settles.
+   Being briefly inside the dashboard — larger than the phone, cropped on every
+   edge — is the point of the move. It is a beat, not a destination. */
+const NARROW_OVERSCAN = 1.25;
+
+/* Where the frame lands once the camera pulls back: full width less a hairline
+   gutter, docked under the nav. 0.94 is the margin the wide fit already uses. */
+const NAV_H = 72;
+const FIT_INSET = 0.94;
+
+/* Share of the narrow scrub spent pushing in, with the rest pulling back to the
+   dock. It is derived rather than picked, because the section below is not
+   waiting for the camera: it is in normal flow, so it starts entering the
+   viewport the moment the pin has less travel left than the height it has to
+   climb. Starting the pull-back on that same frame locks the two together and
+   they land as one movement. Choosing the split by eye instead had the section
+   sliding a hard edge across a dashboard that was still at full crop. */
+const pushShare = (vw: number, vh: number, landedH: number) =>
+  1 - (vh - landedH) / scrubDistance(vw, vh);
+
+const isNarrow = (vw: number) => vw <= NARROW_MAX;
 
 function coverRect(vw: number, vh: number) {
   const s = Math.max(vw / IMG_W, vh / IMG_H);
@@ -29,17 +55,38 @@ function coverRect(vw: number, vh: number) {
 /* zoom factor that brings the laptop screen up to the viewport, whatever the
    cover-fit rect currently is.
 
-   Contain, not cover: the screen and the viewport have different aspect
+   Wide: contain, not cover. The screen and the viewport have different aspect
    ratios, so covering overshot by ~6% of the width and the push-in ended on a
    dashboard whose right column was sliced through the middle of its numbers.
    Fitting it inside — with a margin so it reads as a screen sitting on the
-   white stage rather than a full-bleed crop — lands the whole dashboard. */
+   white stage rather than a full-bleed crop — lands the whole dashboard.
+
+   Narrow: cover and then some, because this is the deepest point of the move
+   rather than where it ends. Containing the 1.77 screen in a phone viewport
+   renders the dashboard at 0.23 — 14px type at 3.2px — so arriving there
+   directly would cut from a distant laptop to an unreadable thumbnail with
+   nothing in between. The push goes past it instead. */
 function zoomFor(vw: number, vh: number) {
   const r = coverRect(vw, vh);
   const screenW = r.width * SCREEN.width;
   const screenH = r.height * SCREEN.height;
-  return 0.94 * Math.min(vw / screenW, vh / screenH);
+  return isNarrow(vw)
+    ? NARROW_OVERSCAN * Math.max(vw / screenW, vh / screenH)
+    : 0.94 * Math.min(vw / screenW, vh / screenH);
 }
+
+/* Where the narrow push settles: the screen exactly as wide as the phone, less
+   the gutter. This is the "fit" the crop pulls back to. */
+function fitZoomFor(vw: number, vh: number) {
+  const r = coverRect(vw, vh);
+  return (FIT_INSET * vw) / (r.width * SCREEN.width);
+}
+
+/* Wide viewports get a long, cinematic 2700px push. On a phone that is three
+   and a half screens of thumb work with no content underneath it, which reads
+   as the page having stalled — Mercury asks for a shade over one and a half. */
+const scrubDistance = (vw: number, vh: number) =>
+  isNarrow(vw) ? Math.round(vh * 1.5) : 2700;
 
 /* Scales the fixed dashboard canvas to fill the screen overlay,
    whatever size that overlay currently renders at. */
@@ -70,7 +117,6 @@ export default function Hero() {
   const stageRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const veilRef = useRef<HTMLDivElement>(null);
-  const dimRef = useRef<HTMLDivElement>(null);
   const screenRef = useRef<HTMLDivElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
   const discRef = useRef<HTMLDivElement>(null);
@@ -82,6 +128,11 @@ export default function Hero() {
      (the focal point itself sits below center in the unzoomed photo) */
   const driftRef = useRef({ x: 0, y: 0 });
 
+  /* the narrow settle: how far to zoom back out, and the extra vertical shift
+     that parks the frame under the nav instead of in the middle */
+  const fitRef = useRef(6);
+  const dockYRef = useRef(0);
+
   const [stage, setStage] = useState(() =>
     typeof window === "undefined"
       ? { width: 0, height: 0, left: 0, top: 0 }
@@ -90,8 +141,7 @@ export default function Hero() {
 
   /* The dashboard is a 564KB self-contained document for a surface nobody sees
      until the push-in is a fifth of the way through — and one that never runs
-     at all below 1024px or under reduced motion. It stays unmounted until the
-     scrub actually approaches it. */
+     under reduced motion. It stays unmounted until the scrub approaches it. */
   const [mountScreen, setMountScreen] = useState(false);
   const mountedRef = useRef(false);
 
@@ -102,10 +152,20 @@ export default function Hero() {
       const r = coverRect(vw, vh);
       setStage(r);
       zoomRef.current = zoomFor(vw, vh);
-      driftRef.current = {
-        x: vw / 2 - (r.left + FOCAL_X * r.width),
-        y: vh / 2 - (r.top + FOCAL_Y * r.height),
-      };
+
+      /* The focal point is fixed in the stage by transform-origin, so scaling
+         never moves it — only these translations do. Both are measured from
+         where the focal point sits unzoomed. */
+      const focalX = r.left + FOCAL.x * r.width;
+      const focalY = r.top + FOCAL.y * r.height;
+      driftRef.current = { x: vw / 2 - focalX, y: vh / 2 - focalY };
+
+      /* Docked, the screen is a band of known height sitting directly under the
+         nav, and the focal point is its centre. */
+      const fit = fitZoomFor(vw, vh);
+      const fitH = fit * r.height * SCREEN.height;
+      fitRef.current = fit;
+      dockYRef.current = NAV_H + fitH / 2 - focalY;
     };
     measure();
 
@@ -188,13 +248,40 @@ export default function Hero() {
         .fromTo(discRef.current, { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, duration: 0.7 }, 1.0);
     });
 
-    /* ---------- scroll-driven cinematic push-in (desktop only) ---------- */
-    mm.add(MOTION_OK_DESKTOP, () => {
+    /* ---------- scroll-driven cinematic push-in ----------
+
+       Two contexts rather than one, because the two framings do not just differ
+       in geometry — they differ in when the photo stops being worth looking at.
+       A wide viewport lands at ~16x, where the laptop and the desk around it are
+       still legible most of the way in. A phone lands at ~29x, and past about a
+       third of the move there is nothing left of the photo but bezel: holding it
+       on screen after that shows a grey smear, not a room. So the narrow
+       crossfade happens sooner and finishes sooner. Splitting the contexts also
+       means a tablet rotated across the breakpoint rebuilds the timeline instead
+       of keeping the other one's timings. */
+    const buildScrub = (narrow: boolean) => {
+      /* Blur lives inside the stage, so the transform multiplies it: 6px at 29x
+         renders as a 174px wash that reads as a broken frame rather than a lens
+         finding focus. Dividing by the zoom asks for the blur we actually want
+         to see on screen. */
+      const startBlur = () => `blur(${(8 / zoomRef.current).toFixed(4)}px)`;
+
+      const t = narrow
+        ? { veil: 0.06, veilDur: 0.2, dash: 0.22, dashDur: 0.28, photo: 0.28, photoDur: 0.26 }
+        : { veil: 0.1, veilDur: 0.24, dash: 0.34, dashDur: 0.34, photo: 0.4, photoDur: 0.34 };
+
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const landedH = NAV_H + fitZoomFor(vw, vh) * coverRect(vw, vh).height * SCREEN.height;
+      const push = narrow ? pushShare(vw, vh, landedH) : 1;
+
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: root.current,
           start: "top top",
-          end: "+=2700",
+          /* Read at refresh time, not build time: the distance depends on the
+             viewport and invalidateOnRefresh re-evaluates it after a rotate. */
+          end: () => `+=${scrubDistance(window.innerWidth, window.innerHeight)}`,
           scrub: 1,
           pin: true,
           anticipatePin: 1,
@@ -239,27 +326,90 @@ export default function Hero() {
             scale: () => zoomRef.current,
             x: () => driftRef.current.x,
             y: () => driftRef.current.y,
-            duration: 1,
+            duration: push,
             ease: "power2.inOut",
           },
           0
         )
-        // the crisp React dashboard fades in and resolves from a slight blur,
-        // reading as the screen "sharpening" while we approach
+        /* Crossfade, not a wash: the photo used to whiten through a dim overlay
+           before dissolving, which read as a white flash between two images.
+           The dashboard and the photo now swap over one overlapping window.
+
+           ease: "none" on both halves is load-bearing. Two overlapping opacity
+           fades on an ease-in-out curve both sit near 50% at the midpoint, and
+           the composite goes pale — the same flash, just softer. Linear keeps
+           the pair summing to a constant.
+
+           The dashboard also leads the photo by 0.06: at full zoom the photo
+           covers nearly the whole viewport, so starting them together leaves a
+           thin white gap on the first frames of the handoff. */
         .fromTo(
           screenRef.current,
-          { autoAlpha: 0, filter: "blur(8px)" },
-          { autoAlpha: 1, filter: "blur(0px)", duration: 0.3, ease: "power1.inOut" },
-          0.18
+          { autoAlpha: 0, filter: startBlur },
+          { autoAlpha: 1, filter: "blur(0px)", duration: t.dashDur, ease: "none" },
+          t.dash
         )
-        // dark stage fades in behind everything, fully in before the photo leaves
-        .fromTo(veilRef.current, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.5, ease: "power1.inOut" }, 0.32)
-        // the photo dims through a cheap overlay (no filter: a blurred layer at
-        // this zoom scale exceeds GPU texture limits and renders black), then
-        // dissolves slowly so the handoff never reads as a hard cut
-        .to(dimRef.current, { autoAlpha: 0.55, duration: 0.35, ease: "power1.inOut" }, 0.3)
-        .to(imgRef.current, { autoAlpha: 0, duration: 0.45, ease: "power1.inOut" }, 0.45);
-    });
+        // white stage settles before the crossfade starts — it is the floor the
+        // photo dissolves onto, never a layer on top of it
+        .fromTo(
+          veilRef.current,
+          { autoAlpha: 0 },
+          { autoAlpha: 1, duration: t.veilDur, ease: "power1.inOut" },
+          t.veil
+        )
+        .to(imgRef.current, { autoAlpha: 0, duration: t.photoDur, ease: "none" }, t.photo);
+
+      if (!narrow) return;
+
+      /* The settle: the camera pulls back until the whole dashboard is in frame,
+         parked under the nav. It starts on the frame the section below begins
+         entering — see pushShare — so the reader sees one continuous movement
+         rather than a zoom and then, separately, a panel. */
+      tl.to(
+        stageRef.current,
+        {
+          scale: () => fitRef.current,
+          y: () => dockYRef.current,
+          duration: 1 - push,
+          ease: "power2.inOut",
+        },
+        push
+      );
+
+      /* Landed, the frame is 281px tall and the hero is a whole viewport, so
+         two thirds of the screen would be white until the reader scrolled it
+         away. Pulling the following section up by exactly that difference makes
+         it arrive flush under the frame at the moment the pin releases.
+
+         Nothing is animated here on purpose. The section is in normal flow, so
+         it is already travelling up at scroll speed; the negative margin only
+         changes where it stops. Tweening it as well would move it twice, at two
+         different rates, which is what makes stitched sections feel glued rather
+         than continuous. It needs the stacking context because the pinned hero
+         is position:fixed, and a positioned ancestor paints over a static
+         sibling however the document is ordered. */
+      const next = root.current?.parentElement?.nextElementSibling;
+      if (!(next instanceof HTMLElement)) return;
+
+      const prev = {
+        marginTop: next.style.marginTop,
+        position: next.style.position,
+        zIndex: next.style.zIndex,
+      };
+      next.style.marginTop = `${Math.round(landedH - vh)}px`;
+      next.style.position = "relative";
+      next.style.zIndex = "1";
+
+      return () => {
+        next.style.marginTop = prev.marginTop;
+        next.style.position = prev.position;
+        next.style.zIndex = prev.zIndex;
+      };
+    };
+
+    mm.add(`${MOTION_OK} and (min-width: ${NARROW_MAX + 1}px)`, () => buildScrub(false));
+    mm.add(`${MOTION_OK} and (max-width: ${NARROW_MAX}px)`, () => buildScrub(true));
+
 
     const onLoad = () => ScrollTrigger.refresh();
     window.addEventListener("load", onLoad);
@@ -289,21 +439,18 @@ export default function Hero() {
             height: stage.height,
             left: stage.left,
             top: stage.top,
-            transformOrigin: `${FOCAL_X * 100}% ${FOCAL_Y * 100}%`,
+            transformOrigin: `${FOCAL.x * 100}% ${FOCAL.y * 100}%`,
           }}
         >
           <img
             ref={imgRef}
-            src="/hero-v3.avif"
+            src="/mcard-hero.avif"
             alt=""
             draggable={false}
             fetchPriority="high"
             decoding="async"
             className="absolute inset-0 h-full w-full select-none"
           />
-
-          {/* dimming overlay for the photo dissolve (opacity-only, GPU-cheap) */}
-          <div ref={dimRef} className="pointer-events-none absolute inset-0 bg-white opacity-0" />
 
           {/* the laptop screen: the real MCard dashboard page (self-contained
               HTML) iframed onto the exact screen coordinates of the photo, so it
@@ -314,7 +461,7 @@ export default function Hero() {
                zoom, so they are written small on purpose: 0.6px/2px renders as
                a ~12px/40px elevation once the screen fills the stage. The old
                60px blur only looked right because its edges sat off-screen. */
-            className="absolute overflow-hidden rounded-[1px] opacity-0 shadow-[0_0.6px_2px_rgba(15,23,42,0.18)]"
+            className="absolute overflow-hidden rounded-[0px] opacity-0 shadow-[0_0.6px_2px_rgba(15,23,42,0.18)]"
             style={{
               left: `${SCREEN.left * 100}%`,
               top: `${SCREEN.top * 100}%`,
