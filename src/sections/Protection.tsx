@@ -58,34 +58,193 @@ function SecurityRings() {
   );
 }
 
-/* ---------------- card visual 3: control toggles ---------------- */
-function Toggle({ on, delay }: { on?: boolean; delay: string }) {
+/* ---------------- card visual 3: permission rows ----------------
+
+   The same people the dashboard in the hero is populated with — see the roster
+   in public/mcard-dash.html. The card's copy is about who may do what, so the
+   illustration has to have a who in it; three switches only said that settings
+   exist. Names and roles are the part of that continuity that means anything —
+   the roster's per-person colours are deliberately not used, because one of them
+   is #2D3DEC, close enough to the brand's #0c52ef to read as a mistake.
+
+   Width-budgeted against the narrowest card, 312px at a single column: 280
+   inside the container's px-4, 260 inside the plate's px-2.5, less the 36px
+   avatar and two 10px gaps leaves 204 for text and chip. The widest chip,
+   "Lihat & pindah", takes 94, so the text column gets 110 against a 97px
+   "Software Engineer". truncate is there for whatever gets edited in later. */
+const TEAM = [
+  { initials: "BS", name: "Budi Santoso", role: "Admin Keuangan", access: "Semua akses", full: true },
+  { initials: "SD", name: "Sari Dewi", role: "Marketing Lead", access: "Lihat & pindah" },
+  { initials: "AP", name: "Andi Pratama", role: "Software Engineer", access: "Lihat saja" },
+];
+
+/* Every filter, clip, mask and gradient id is namespaced per instance. The mark
+   renders three times, and url(#id) is resolved against the whole document: three
+   copies sharing one set of ids would all silently paint through the first copy's
+   defs, so editing one avatar would change none of them. The source also shipped
+   two blur filters nothing referenced; they are not carried over.
+
+   No <title> and no role="img" — this sits inside an aria-hidden subtree, so both
+   would be markup that can never be reached. */
+function NovaAvatar({ uid }: { uid: string }) {
+  const id = (n: string) => `nova-${uid}-${n}`;
+  const ref = (n: string) => `url(#${id(n)})`;
+
   return (
-    <div
-      className={`prot-toggle relative rounded-full transition-colors ${
-        on
-          ? "h-[58px] w-[86%] bg-brand shadow-[0_0_50px_4px_rgba(12,82,239,0.30)]"
-          : "h-[42px] w-[64%] border border-black/12 bg-black/[0.03] shadow-[inset_0_2px_8px_rgba(15,15,20,0.06)]"
-      }`}
-      style={{ transitionDelay: delay }}
-    >
-      <div
-        className={`prot-knob absolute rounded-full ${
-          on
-            ? "right-[7px] top-[7px] h-[44px] w-[44px] bg-white shadow-md"
-            : "left-[6px] top-[6px] h-[30px] w-[30px] border border-black/15 bg-white shadow-sm"
-        }`}
-      />
-    </div>
+    <svg viewBox="0 0 64 64" focusable="false" className="h-9 w-9 shrink-0">
+      <defs>
+        <filter id={id("b1")} x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="1.1" />
+        </filter>
+        <filter id={id("b3")} x="-55%" y="-55%" width="210%" height="210%">
+          <feGaussianBlur stdDeviation="3.2" />
+        </filter>
+        <filter id={id("b5")} x="-70%" y="-70%" width="240%" height="240%">
+          <feGaussianBlur stdDeviation="5.1" />
+        </filter>
+        <filter id={id("b6")} x="-75%" y="-75%" width="250%" height="250%">
+          <feGaussianBlur stdDeviation="5.7" />
+        </filter>
+        <filter id={id("b8")} x="-85%" y="-85%" width="270%" height="270%">
+          <feGaussianBlur stdDeviation="8.4" />
+        </filter>
+        <clipPath id={id("clip")}>
+          <rect width="64" height="64" rx="32" fill="#ffffff" />
+        </clipPath>
+        {/* The last 1.6% of the radius fades to transparent, so the disc's rim
+            is feathered rather than cut — the mark has no stroke to hide an
+            aliased edge behind. */}
+        <radialGradient id={id("edge")} gradientUnits="userSpaceOnUse" cx="32" cy="32" r="32">
+          <stop offset="98.4375%" stopColor="#ffffff" />
+          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+        </radialGradient>
+        <mask
+          id={id("edge-mask")}
+          maskUnits="userSpaceOnUse"
+          maskContentUnits="userSpaceOnUse"
+          x="0"
+          y="0"
+          width="64"
+          height="64"
+          style={{ maskType: "alpha" }}
+        >
+          <rect width="64" height="64" fill={ref("edge")} />
+        </mask>
+      </defs>
+
+      <g mask={ref("edge-mask")}>
+        <g clipPath={ref("clip")}>
+          <g transform="translate(32.030 32.030) rotate(-90.000)">
+            <rect
+              x="-37.625"
+              y="-37.625"
+              width="75.250"
+              height="75.250"
+              rx="16.270"
+              fill="#71abff"
+            />
+          </g>
+          {/* three concentric strokes at increasing blur — the inner glow */}
+          <g transform="translate(32 32) rotate(-90)" opacity="0.42">
+            <rect
+              x="-36.425"
+              y="-36.425"
+              width="72.850"
+              height="72.850"
+              rx="15.070"
+              fill="none"
+              stroke="#ffffff"
+              strokeWidth="1.400"
+              opacity="0.38"
+              filter={ref("b1")}
+            />
+            <rect
+              x="-35.625"
+              y="-35.625"
+              width="71.250"
+              height="71.250"
+              rx="14.270"
+              fill="none"
+              stroke="#88b9ff"
+              strokeWidth="2.400"
+              opacity="0.24"
+              filter={ref("b3")}
+            />
+            <rect
+              x="-33.625"
+              y="-33.625"
+              width="67.250"
+              height="67.250"
+              rx="12.270"
+              fill="none"
+              stroke="#7cb2ff"
+              strokeWidth="4.000"
+              opacity="0.18"
+              filter={ref("b5")}
+            />
+          </g>
+          {/* the pale cap and the deep blue core, both blurred past their own
+              bounds and cropped back by the clip — this is what makes the disc
+              read as lit from below rather than flat */}
+          <g transform="translate(31.863 14.910) rotate(180.095)">
+            <rect
+              x="-35.602"
+              y="-41.764"
+              width="71.205"
+              height="83.527"
+              rx="33.631"
+              fill="#f8f8f8"
+              opacity="0.918"
+              filter={ref("b6")}
+            />
+          </g>
+          <g transform="translate(32.072 3.452) rotate(180.205)">
+            <rect
+              x="-29.222"
+              y="-32.076"
+              width="58.443"
+              height="64.153"
+              rx="25.283"
+              fill="#4879ff"
+              opacity="0.862"
+              filter={ref("b8")}
+            />
+          </g>
+        </g>
+      </g>
+    </svg>
   );
 }
 
-function ControlToggles() {
+/* aria-hidden: the h3 and body below say all of this in full sentences, so
+   reading three invented names and job titles first only delays the point. */
+function PermissionRows() {
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center gap-[13%] px-8">
-      <Toggle delay="0ms" />
-      <Toggle delay="120ms" />
-      <Toggle on delay="240ms" />
+    <div aria-hidden className="flex h-full w-full flex-col justify-center gap-3 px-4">
+      {TEAM.map((m) => (
+        <div
+          key={m.initials}
+          className="prot-row flex items-center gap-2.5 rounded-2xl border border-black/[0.06] bg-white px-2.5 py-2.5 shadow-[0_1px_2px_rgba(15,23,42,0.05)]"
+        >
+          <NovaAvatar uid={m.initials} />
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-caption font-semibold text-slate-900">{m.name}</span>
+            <span className="block truncate text-[11px] leading-[1.45] text-slate-500">{m.role}</span>
+          </span>
+          {/* One brand-blue element per card, carrying the same glow the LPS bar
+              and the lock badge carry. It sits on the top of the access ladder,
+              so the eye lands on the most-trusted row first. */}
+          <span
+            className={`prot-chip shrink-0 whitespace-nowrap rounded-full px-2.5 py-1 text-[11px] font-medium ${
+              m.full
+                ? "bg-brand text-white shadow-[0_0_28px_3px_rgba(12,82,239,0.30)]"
+                : "bg-black/[0.05] text-slate-500"
+            }`}
+          >
+            {m.access}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -126,7 +285,7 @@ const CARDS = [
     body: "Proteksi fraud real-time, verifikasi MFA, dan nomor kartu plus CVV yang hanya terlihat setelah verifikasi PIN 6 digit.",
   },
   {
-    visual: <ControlToggles />,
+    visual: <PermissionRows />,
     title: "Kontrol di tangan kamu",
     body: "Tentukan siapa yang bisa melihat, memindahkan, atau menarik dana. Lengkap dengan alur persetujuan, kunci kartu, dan izin per anggota tim.",
   },
@@ -263,8 +422,14 @@ export default function Protection() {
           scrollTrigger: { trigger: ".prot-cards", start: "top 70%" },
         }
       );
+      /* Two beats, not one: the rows arrive, then the access chips land behind
+         them. The card is about deciding who may do what, so the reveal gets to
+         say it in that order — here are your people, here is what each can do —
+         instead of everything simply appearing. The rows keep the 0.14 stagger
+         the bars and the cards themselves use, so the three visuals still read
+         as one system. */
       gsap.fromTo(
-        ".prot-toggle",
+        ".prot-row",
         { y: 30, autoAlpha: 0 },
         {
           y: 0,
@@ -272,6 +437,21 @@ export default function Protection() {
           duration: 0.7,
           stagger: 0.14,
           ease: "power2.out",
+          scrollTrigger: { trigger: ".prot-cards", start: "top 70%" },
+        }
+      );
+      /* 0.9, not 0 — nothing in the world appears out of nothing, and a chip
+         growing from a point reads as a glitch rather than an arrival. */
+      gsap.fromTo(
+        ".prot-chip",
+        { autoAlpha: 0, scale: 0.9 },
+        {
+          autoAlpha: 1,
+          scale: 1,
+          duration: 0.45,
+          stagger: 0.1,
+          delay: 0.25,
+          ease: "back.out(1.7)",
           scrollTrigger: { trigger: ".prot-cards", start: "top 70%" },
         }
       );
