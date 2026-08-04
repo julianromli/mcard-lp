@@ -180,3 +180,54 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* The hero scrim: white, top-anchored, between the photograph and the copy.
+
+   Every stop below is a measurement, not a taste. Sampled against the shipped
+   3840x2000 photo at its cover-fit crop, the copy's two failure points were the
+   nav band (slate-600 links over dark cloud, 2.05:1) and the sub-headline
+   (4.29:1 on desktop, 2.93:1 on the narrow crop). The headline was never the
+   problem — slate-900 over the sunrise reads at 9:1.
+
+   The alpha each band needs is not monotonic: ~.26 at the very top, almost
+   nothing behind the headline, then ~.18 again where the sub-line crosses the
+   volcano. So this holds a plateau before it falls rather than ramping straight
+   down — a plain two-stop ramp reaching 45% delivers only ~.10 where the
+   sub-line actually sits. The intermediate stops are also what keeps an 800px
+   alpha ramp from banding across a smooth sky.
+
+   The two lists exist because coverRect scales to height on a phone: a 390px
+   viewport shows the centre 24% of the photo, which crops the volcano out but
+   leaves the dark misty valley behind the copy — and the h1 wraps to four
+   lines, so the copy reaches ~58% of the hero instead of ~40%. Darker
+   background, taller copy: the narrow list is both stronger and longer. The
+   breakpoint is 1024px because that is NARROW_MAX + 1, the same line the scrub
+   forks on. */
+.hero-scrim {
+  background-image: linear-gradient(
+    to bottom,
+    rgb(255 255 255 / 0.32) 0%,
+    rgb(255 255 255 / 0.3) 20%,
+    rgb(255 255 255 / 0.28) 38%,
+    rgb(255 255 255 / 0.24) 50%,
+    rgb(255 255 255 / 0.15) 62%,
+    rgb(255 255 255 / 0.06) 72%,
+    rgb(255 255 255 / 0.015) 78%,
+    rgb(255 255 255 / 0) 82%
+  );
+}
+
+@media (min-width: 1024px) {
+  .hero-scrim {
+    background-image: linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 0.26) 0%,
+      rgb(255 255 255 / 0.24) 15%,
+      rgb(255 255 255 / 0.18) 30%,
+      rgb(255 255 255 / 0.11) 40%,
+      rgb(255 255 255 / 0.05) 50%,
+      rgb(255 255 255 / 0.015) 58%,
+      rgb(255 255 255 / 0) 65%
+    );
+  }
+}

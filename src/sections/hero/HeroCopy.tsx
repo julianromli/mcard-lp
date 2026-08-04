@@ -11,7 +11,13 @@ export function HeroCopy({ copyRef }: { copyRef: RefObject<HTMLDivElement | null
       <h1 className="hero-copy-el text-balance text-center text-display-lg font-extrabold text-slate-900 opacity-0">
         Kendali penuh atas pengeluaran bisnismu
       </h1>
-      <p className="hero-copy-el mt-5 max-w-[580px] text-pretty text-center text-body-lg text-slate-600 opacity-0">
+      {/* slate-800, not slate-600: this line crosses the volcano silhouette on
+          desktop and the dark valley on a phone, where slate-600 measured
+          1.77:1 and 2.27:1. Reaching AA by scrim alone would have taken a 58%
+          white wash — the photograph would have been gone. Two shades darker
+          brings that down to the ~.18 the scrim actually carries. The step down
+          from the headline is now size and weight rather than colour. */}
+      <p className="hero-copy-el mt-5 max-w-[580px] text-pretty text-center text-body-lg text-slate-800 opacity-0">
         Terbitkan kartu virtual tanpa batas, atur anggaran per tim, dan pantau tiap transaksi real-time.
         Semua dari satu dashboard.
       </p>

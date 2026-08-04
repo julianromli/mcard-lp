@@ -11,6 +11,7 @@ export default function Hero() {
   const stageRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const veilRef = useRef<HTMLDivElement>(null);
+  const scrimRef = useRef<HTMLDivElement>(null);
   const screenRef = useRef<HTMLDivElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
   const discRef = useRef<HTMLDivElement>(null);
@@ -110,6 +111,11 @@ export default function Hero() {
       tl
         // hero copy exits early
         .to(copyRef.current, { autoAlpha: 0, y: -70, duration: 0.15, ease: "power1.in" }, 0)
+        /* The scrim serves the copy, so it leaves with it. Holding it would
+           park a white haze across the top of the landed dashboard for the rest
+           of the pin — the scrim sits above the stage, and once the photo has
+           dissolved the dashboard is the only thing left under it. */
+        .to(scrimRef.current, { autoAlpha: 0, duration: 0.15, ease: "power1.in" }, 0)
         /* fromTo, not to: the pill ships with opacity-0 in the markup so the
            intro can fade it in, and a plain .to() records its start value when
            the scrub timeline is built — which is before the intro has run. The
@@ -241,6 +247,17 @@ export default function Hero() {
           screenRef={screenRef}
         />
       </div>
+
+      {/* Contrast scrim. Deliberately a sibling of the world rather than a child
+          of it: inside introRef it would ride the intro's 1.12 scale, and inside
+          the stage it would be blown up 16-29x by the push-in. Out here it is a
+          fixed pane over a moving photograph. z-10 puts it above the world and
+          below the copy — the text it protects must never be behind it.
+
+          No reduced-motion branch on purpose. The fade above lives inside
+          buildScrub, which only runs under MOTION_OK; a reader who asks for less
+          motion gets no scrub, and the scrim they need simply stays. */}
+      <div ref={scrimRef} className="hero-scrim pointer-events-none absolute inset-0 z-10" />
 
       <HeroCopy copyRef={copyRef} />
       <HeroDisclosure discRef={discRef} />

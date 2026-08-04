@@ -72,12 +72,17 @@ export default function Nav() {
           <span className="text-label font-semibold tracking-[0.32em]">MCARD</span>
         </a>
 
+        {/* The header is transparent until 80px of scroll, which puts these over
+            the hero photo's darkest band — slate-600 measured 2.05:1 there, the
+            worst contrast on the page. slate-800 clears AA against the scrim
+            behind it. Hover then had to leave the greyscale ramp: slate-800 to
+            slate-900 is a step nobody can see over a photograph. */}
         <nav aria-label="Utama" className="hidden items-center gap-8 lg:flex">
           {MENU.map((m) => (
             <a
               key={m.href}
               href={m.href}
-              className="whitespace-nowrap py-3 text-body-sm font-medium text-slate-600 transition-colors hover:text-slate-900"
+              className="whitespace-nowrap py-3 text-body-sm font-medium text-slate-800 transition-colors hover:text-brand"
             >
               {m.label}
             </a>
@@ -87,7 +92,7 @@ export default function Nav() {
         <div className="flex items-center gap-3 lg:gap-6">
           <a
             href="#"
-            className="hidden py-3 text-body-sm font-medium text-slate-600 transition-colors hover:text-slate-900 sm:block"
+            className="hidden py-3 text-body-sm font-medium text-slate-800 transition-colors hover:text-brand sm:block"
           >
             Masuk
           </a>
