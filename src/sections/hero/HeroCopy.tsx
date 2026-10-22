@@ -62,7 +62,7 @@ export function HeroDisclosure({ discRef }: { discRef: RefObject<HTMLDivElement 
   return (
     <div
       ref={discRef}
-      className="absolute bottom-5 left-1/2 z-20 w-[max-content] max-w-[92vw] -translate-x-1/2 text-pretty rounded-xl bg-white/75 px-5 py-2.5 text-center text-caption text-slate-600 opacity-0 shadow-sm backdrop-blur"
+      className="absolute bottom-5 left-1/2 z-20 w-[max-content] max-w-[92vw] -translate-x-1/2 text-pretty rounded-full bg-black/70 px-3.5 py-1 text-center text-caption text-white/90 opacity-0 ring-1 ring-white/10 backdrop-blur"
     >
       MCard adalah platform spend management dari Mayar, bukan bank. Kartu diterbitkan lewat partner
       berlisensi yang terdaftar dan diawasi.
